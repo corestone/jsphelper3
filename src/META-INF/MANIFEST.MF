@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Class-Path: cglib-2.2.2.jar commons-beanutils-1.8.3.jar commons-digest
+ er3-3.2.jar commons-fileupload-1.2.2.jar commons-io-2.4.jar commons-l
+ ang3-3.1.jar jxl-2.6.12.jar logback-access-1.0.11.jar logback-classic
+ -1.0.11.jar logback-core-1.0.11.jar mail-1.4.4.jar slf4j-api-1.7.5.ja
+ r junit-4.10.jar jsp-api.jar servlet-api.jar
+

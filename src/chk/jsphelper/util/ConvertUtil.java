@@ -1,17 +1,22 @@
 package chk.jsphelper.util;
 
+import chk.jsphelper.Constant;
+import chk.jsphelper.DataList;
+import chk.jsphelper.ObjectFactory;
+import chk.jsphelper.module.wrapper.MapStringsAdapter;
+import chk.jsphelper.object.Message;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import chk.jsphelper.Constant;
-import chk.jsphelper.DataList;
-import chk.jsphelper.ObjectFactory;
-import chk.jsphelper.module.wrapper.MapWrapper;
-import chk.jsphelper.object.Message;
-
-public class ConvertUtil
+public final class ConvertUtil
 {
+	private ConvertUtil()
+	{
+
+	}
+
 	/**
 	 * DataList의 데이타를 json형식의 문자열로 변환하는 메소드이다.
 	 * 
@@ -28,9 +33,9 @@ public class ConvertUtil
 			int j = 0;
 			for (final int y = dl.getFieldCount(); j < (y - 1); j++)
 			{
-				sb.append("'" + dl.getFieldName(j) + "' : '" + dl.getString(dl.getFieldName(j)) + "', ");
+				sb.append("'").append(dl.getFieldName(j)).append("' : '").append(dl.getString(dl.getFieldName(j))).append("', ");
 			}
-			sb.append("'" + dl.getFieldName(j) + "' : '" + dl.getString(dl.getFieldName(j)) + "'}");
+			sb.append("'").append(dl.getFieldName(j)).append("' : '").append(dl.getString(dl.getFieldName(j))).append("'}");
 		}
 		sb.append("]");
 		return sb.delete(1, 2).toString();
@@ -46,7 +51,7 @@ public class ConvertUtil
 	 */
 	public static Map<String, String[]> dataList2Map (final DataList dl)
 	{
-		final Map<String, String[]> map = new MapWrapper();
+		final Map<String, String[]> map = new MapStringsAdapter();
 		for (int i = 0; i < dl.getFieldCount(); i++)
 		{
 			map.put(dl.getFieldName(i), dl.getFieldData(i + 1));
@@ -97,13 +102,13 @@ public class ConvertUtil
 	public static String dataList2XML (final DataList dl)
 	{
 		final StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<list>\n");
-		final int i = 0;
+		int i = 0;
 		while (dl.next())
 		{
-			sb.append("\t<data row=\"" + (i + 1) + "\">\n");
+			sb.append("\t<data row=\"").append(++i).append("\">\n");
 			for (int j = 0, y = dl.getFieldCount(); j < y; j++)
 			{
-				sb.append("\t\t<" + dl.getFieldName(j) + "><![CDATA[" + dl.getString(dl.getFieldName(j)) + "]]></" + dl.getFieldName(j) + ">\n");
+				sb.append("\t\t<").append(dl.getFieldName(j)).append("><![CDATA[").append(dl.getString(dl.getFieldName(j))).append("]]></").append(dl.getFieldName(j)).append(">\n");
 			}
 			sb.append("\t</data>\n");
 		}
@@ -121,20 +126,18 @@ public class ConvertUtil
 	public static String map2JSON (final Map<String, String[]> map)
 	{
 		final StringBuilder sb = new StringBuilder();
-		final Iterator<String> keys = map.keySet().iterator();
-		while (keys.hasNext())
+		for (Map.Entry<String, String[]> entry : map.entrySet())
 		{
-			final String key = keys.next();
-			final String[] values = map.get(key);
-			sb.append(",\n\t\"" + key + "\" : [");
+			final String[] values = entry.getValue();
+			sb.append(",\n\t\"").append(entry.getKey()).append("\" : [");
 			final StringBuilder sb1 = new StringBuilder();
 			for (final String value : values)
 			{
-				sb1.append(", \"" + value + "\"");
+				sb1.append(", \"").append(value).append("\"");
 			}
-			sb.append(sb1.substring(2) + "]");
+			sb.append(sb1.substring(2)).append("]");
 		}
-		return "{" + sb.substring(map.size() > 0 ? 1 : 0) + "\n}";
+		return "{" + sb.substring(map.size() == 0 ? 0 : 1) + "\n}";
 	}
 
 	/**

@@ -1,29 +1,30 @@
 package chk.jsphelper.engine.ext.sql;
 
+import chk.jsphelper.Constant;
+import chk.jsphelper.module.wrapper.ConnWrapper;
+import chk.jsphelper.module.wrapper.MapStringsAdapter;
+import chk.jsphelper.object.enums.SqlBindDir;
+import chk.jsphelper.object.sub.SqlBind;
+
 import java.io.StringReader;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
-import chk.jsphelper.Constant;
-import chk.jsphelper.module.wrapper.ConnWrapper;
-import chk.jsphelper.module.wrapper.MapWrapper;
-import chk.jsphelper.object.enums.SqlBindDir;
-import chk.jsphelper.object.sub.SqlBind;
-
 public class CallableStatementManager extends StatementManager
 {
 	private CallableStatement cs = null;
 	private String[] outParameter;
 
-	public CallableStatementManager (final List<SqlBind> bindValue, final MapWrapper map)
+	public CallableStatementManager (final List<SqlBind> bindValue, final MapStringsAdapter map)
 	{
 		super(bindValue, map);
 	}
 
 	/**
-	 * @param cs
+	 * @param conn
+	 * @param sql
 	 * @param index
 	 * @throws SQLException
 	 * @throws ParseException

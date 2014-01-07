@@ -1,5 +1,10 @@
 package chk.jsphelper.engine.ext.sql;
 
+import chk.jsphelper.module.wrapper.MapStringsAdapter;
+import chk.jsphelper.object.sub.SqlBind;
+import chk.jsphelper.util.DateUtil;
+import chk.jsphelper.util.NumberUtil;
+
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -7,21 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import chk.jsphelper.module.wrapper.MapWrapper;
-import chk.jsphelper.object.sub.SqlBind;
-import chk.jsphelper.util.DateUtil;
-import chk.jsphelper.util.NumberUtil;
-
 public abstract class StatementManager
 {
 	protected final List<SqlBind> bindValue;
 	protected long executeTime = 0L;
-	protected final MapWrapper map;
+	protected final MapStringsAdapter map;
 	protected final List<String> parameterValues;
 	protected int paramIndex;
 	protected String sqlString = "";
 
-	public StatementManager (final List<SqlBind> bindValue, final MapWrapper map)
+	public StatementManager (final List<SqlBind> bindValue, final MapStringsAdapter map)
 	{
 		this.parameterValues = new ArrayList<String>();
 		this.bindValue = bindValue;
@@ -82,7 +82,7 @@ public abstract class StatementManager
 
 	protected String getParamValue (final String value, final int index, final String defaultValue)
 	{
-		String paramValue = null;
+		String paramValue;
 		if ((this.map.get(value) == null) || (this.map.get(value).length == 0))
 		{
 			// default 값이 "_index"일 경우 1부터 시작하는 인덱스 값이 자동으로 입력된다.

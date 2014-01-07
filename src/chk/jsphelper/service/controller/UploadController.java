@@ -34,7 +34,7 @@ public class UploadController
 		}
 		finally
 		{
-			Constant.getLogger().debug("executeUpload id:{} 마침 - {}", new String[] { objectID, DateUtil.getExecutedTime(stime) });
+			Constant.getLogger().debug("executeUpload id:{} 마침 - {}", new Object[] { objectID, DateUtil.getExecutedTime(stime) });
 		}
 		return uvs;
 	}

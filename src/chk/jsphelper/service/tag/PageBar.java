@@ -57,18 +57,18 @@ public class PageBar extends TagSupport
 			}
 
 			final String indexCurrentParam = Constant.getValue("KeyName.CurrentIndex", "_currentIndex", this.configIndex);
-			String valueStart = "";
-			String valueEnd = "";
+			String valueStart;
+			String valueEnd;
 			if (this.comboBox)
 			{
 				valueStart = "jQuery('#" + indexCurrentParam + " > option[@value='";
-				valueEnd = "']').attr('selected', 'true');";
+				valueEnd = "']').prop('selected', true);";
 			}
 			else
 			{
 				valueStart = "jQuery('#" + indexCurrentParam + "').val('";
 				valueEnd = "');";
-				sb.append("<input type=\"hidden\" id=\"" + indexCurrentParam + "\" name=\"" + indexCurrentParam + "\" value=\"" + index + "\" />");
+				sb.append("<input type=\"hidden\" id=\"").append(indexCurrentParam).append("\" name=\"").append(indexCurrentParam).append("\" value=\"").append(index).append("\" />");
 			}
 
 			// 첫 페이지 링크
@@ -76,11 +76,11 @@ public class PageBar extends TagSupport
 			{
 				if (index > 1)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_first_page" + this.imageSuffix + ".gif\" alt=\"First Page\" align=\"absmiddle\" onclick=\"" + valueStart + "1" + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarImg hand\" /> ");
+					sb.append(" <img src=\"").append(Constant.getValue("Path.Client", "/jsphelper/")).append("img/_btn_first_page").append(this.imageSuffix).append(".gif\" alt=\"First Page\" align=\"absmiddle\" onclick=\"").append(valueStart).append("1").append(valueEnd).append("_goPage('").append(this.configIndex).append("');\" class=\"pageBarImg hand\" /> ");
 				}
 				else if (this.noLinkShow)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_first_page_" + this.imageSuffix + ".gif\" alt=\"First Page\" align=\"absmiddle\" class=\"pageBarImg\" /> ");
+					sb.append(" <img src=\"").append(Constant.getValue("Path.Client", "/jsphelper/")).append("img/_btn_first_page_").append(this.imageSuffix).append(".gif\" alt=\"First Page\" align=\"absmiddle\" class=\"pageBarImg\" /> ");
 				}
 			}
 			// 이전블력 페이지 링크
@@ -88,11 +88,11 @@ public class PageBar extends TagSupport
 			{
 				if ((index - size) > 0)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_prev_block" + this.imageSuffix + ".gif\" alt=\"Prev Block\" align=\"absmiddle\" onclick=\"" + valueStart + (start - 1) + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarImg hand\" /> ");
+					sb.append(" <img src=\"").append(Constant.getValue("Path.Client", "/jsphelper/")).append("img/_btn_prev_block").append(this.imageSuffix).append(".gif\" alt=\"Prev Block\" align=\"middle\" onclick=\"").append(valueStart).append((start - 1)).append(valueEnd).append("_goPage('").append(this.configIndex).append("');\" class=\"pageBarImg hand\" /> ");
 				}
 				else if (this.noLinkShow)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_prev_block_" + this.imageSuffix + ".gif\" alt=\"Prev Block\" align=\"absmiddle\" class=\"pageBarImg\" /> ");
+					sb.append(" <img src=\"").append(Constant.getValue("Path.Client", "/jsphelper/")).append("img/_btn_prev_block_").append(this.imageSuffix).append(".gif\" alt=\"Prev Block\" align=\"middle\" class=\"pageBarImg\" /> ");
 				}
 			}
 			// 이전 페이지 링크
@@ -100,11 +100,25 @@ public class PageBar extends TagSupport
 			{
 				if (index > 1)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_prev_page" + this.imageSuffix + ".gif\" alt=\"Prev Page\" align=\"absmiddle\" onclick=\"" + valueStart + (index - 1) + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarImg hand\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_prev_page");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Prev Page\" align=\"middle\" onclick=\"");
+					sb.append(valueStart);
+					sb.append((index - 1));
+					sb.append(valueEnd);
+					sb.append("_goPage('");
+					sb.append(this.configIndex);
+					sb.append("');\" class=\"pageBarImg hand\" /> ");
 				}
 				else if (this.noLinkShow)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_prev_page_" + this.imageSuffix + ".gif\" alt=\"Prev Page\" align=\"absmiddle\" class=\"pageBarImg\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_prev_page_");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Prev Page\" align=\"middle\" class=\"pageBarImg\" /> ");
 				}
 			}
 			// 페이지 리스트 링크
@@ -112,11 +126,53 @@ public class PageBar extends TagSupport
 			{
 				if (i < 10)
 				{
-					sb.append(i != index ? " <span onclick=\"" + valueStart + i + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarNum" + this.imageSuffix + " hand\">[ " + i + " ]</span> " : " <span class=\"pageBarThis" + this.imageSuffix + "\" style=\"font-weight:bold;\"> " + i + " </span> ");
+					if (i != index)
+					{
+						sb.append(" <span onclick=\"");
+						sb.append(valueStart);
+						sb.append(i);
+						sb.append(valueEnd);
+						sb.append("_goPage('");
+						sb.append(this.configIndex);
+						sb.append("');\" class=\"pageBarNum");
+						sb.append(this.imageSuffix);
+						sb.append(" hand\">[ ");
+						sb.append(i);
+						sb.append(" ]</span> ");
+					}
+					else
+					{
+						sb.append(" <span class=\"pageBarThis");
+						sb.append(this.imageSuffix);
+						sb.append("\" style=\"font-weight:bold;\"> ");
+						sb.append(i);
+						sb.append(" </span> ");
+					}
 				}
 				else
 				{
-					sb.append(i != index ? " <span onclick=\"" + valueStart + i + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarNum" + this.imageSuffix + " hand\">[" + i + "]</span> " : " <span class=\"pageBarThis" + this.imageSuffix + "\" style=\"font-weight:bold;\">" + i + "</span> ");
+					if (i != index)
+					{
+						sb.append(" <span onclick=\"");
+						sb.append(valueStart);
+						sb.append(i);
+						sb.append(valueEnd);
+						sb.append("_goPage('");
+						sb.append(this.configIndex);
+						sb.append("');\" class=\"pageBarNum");
+						sb.append(this.imageSuffix);
+						sb.append(" hand\">[");
+						sb.append(i);
+						sb.append("]</span> ");
+					}
+					else
+					{
+						sb.append(" <span class=\"pageBarThis");
+						sb.append(this.imageSuffix);
+						sb.append("\" style=\"font-weight:bold;\">");
+						sb.append(i);
+						sb.append("</span> ");
+					}
 				}
 			}
 			// 다음 페이지 링크
@@ -124,11 +180,25 @@ public class PageBar extends TagSupport
 			{
 				if (index < this.total)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_next_page" + this.imageSuffix + ".gif\" alt=\"Next Page\" align=\"absmiddle\" onclick=\"" + valueStart + (index + 1) + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarImg hand\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_next_page");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Next Page\" align=\"middle\" onclick=\"");
+					sb.append(valueStart);
+					sb.append((index + 1));
+					sb.append(valueEnd);
+					sb.append("_goPage('");
+					sb.append(this.configIndex);
+					sb.append("');\" class=\"pageBarImg hand\" /> ");
 				}
 				else if (this.noLinkShow)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_next_page_" + this.imageSuffix + ".gif\" alt=\"Next Page\" align=\"absmiddle\" class=\"pageBarImg\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_next_page_");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Next Page\" align=\"middle\" class=\"pageBarImg\" /> ");
 				}
 			}
 			// 다음블력 페이지 링크
@@ -136,11 +206,25 @@ public class PageBar extends TagSupport
 			{
 				if ((start + size) <= this.total)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_next_block" + this.imageSuffix + ".gif\" alt=\"Next Block\" align=\"absmiddle\" onclick=\"" + valueStart + (start + size) + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarImg hand\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_next_block");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Next Block\" align=\"middle\" onclick=\"");
+					sb.append(valueStart);
+					sb.append(start + size);
+					sb.append(valueEnd);
+					sb.append("_goPage('");
+					sb.append(this.configIndex);
+					sb.append("');\" class=\"pageBarImg hand\" /> ");
 				}
 				else if (this.noLinkShow)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_next_block_" + this.imageSuffix + ".gif\" alt=\"Next Block\" align=\"absmiddle\" class=\"pageBarImg\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_next_block_");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Next Block\" align=\"middle\" class=\"pageBarImg\" /> ");
 				}
 			}
 			// 끝 페이지 페이지 링크
@@ -148,11 +232,25 @@ public class PageBar extends TagSupport
 			{
 				if (index < this.total)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_last_page" + this.imageSuffix + ".gif\" alt=\"Last Page\" align=\"absmiddle\" onclick=\"" + valueStart + this.total + valueEnd + "_goPage('" + this.configIndex + "');\" class=\"pageBarImg hand\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_last_page");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Last Page\" align=\"middle\" onclick=\"");
+					sb.append(valueStart);
+					sb.append(this.total);
+					sb.append(valueEnd);
+					sb.append("_goPage('");
+					sb.append(this.configIndex);
+					sb.append("');\" class=\"pageBarImg hand\" /> ");
 				}
 				else if (this.noLinkShow)
 				{
-					sb.append(" <img src=\"" + Constant.getValue("Path.Client", "/jsphelper/") + "img/_btn_last_page_" + this.imageSuffix + ".gif\" alt=\"Last Page\" align=\"absmiddle\" class=\"pageBarImg\" /> ");
+					sb.append(" <img src=\"");
+					sb.append(Constant.getValue("Path.Client", "/jsphelper/"));
+					sb.append("img/_btn_last_page_");
+					sb.append(this.imageSuffix);
+					sb.append(".gif\" alt=\"Last Page\" align=\"middle\" class=\"pageBarImg\" /> ");
 				}
 			}
 		}

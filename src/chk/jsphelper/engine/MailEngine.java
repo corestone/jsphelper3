@@ -38,47 +38,40 @@ public class MailEngine implements InterfaceEngine
 
 	public void execute () throws Exception
 	{
-		try
+		this.mailSession = this.getMailSession();
+		Constant.getLogger().debug("MAIL TO TEMPLATE : {}", this.mail.getToEmail());
+		Constant.getLogger().debug("MAIL CC TEMPLATE : {}", this.mail.getToCC());
+		Constant.getLogger().debug("MAIL BCC TEMPLATE : {}", this.mail.getToBCC());
+		Constant.getLogger().debug("MAIL SUBJECT TEMPLATE : {}", this.mail.getSubject());
+		Constant.getLogger().debug("MAIL BODY TEMPLATE :\n{}", this.mail.getBody());
+
+		final ParameterMapper pm = new ParameterMapper(this.param);
+		pm.checkParam();
+		final String[] mailto = pm.convertMappingTexts(this.mail.getToEmail());
+		final String[] mailcc = pm.convertMappingTexts(StringUtil.trim(this.mail.getToCC()));
+		final String[] mailbcc = pm.convertMappingTexts(StringUtil.trim(this.mail.getToBCC()));
+		final String[] subject = pm.convertMappingTexts(this.mail.getSubject());
+		final String[] body = pm.convertMappingTexts(this.mail.getBody());
+		this.resultValue = this.mail.isThread() ? false : true;
+
+		for (int i = 0; i < mailto.length; i++)
 		{
-			this.mailSession = this.getMailSession();
-			Constant.getLogger().debug("MAIL TO TEMPLATE : {}", this.mail.getToEmail());
-			Constant.getLogger().debug("MAIL CC TEMPLATE : {}", this.mail.getToCC());
-			Constant.getLogger().debug("MAIL BCC TEMPLATE : {}", this.mail.getToBCC());
-			Constant.getLogger().debug("MAIL SUBJECT TEMPLATE : {}", this.mail.getSubject());
-			Constant.getLogger().debug("MAIL BODY TEMPLATE :\n{}", this.mail.getBody());
-
-			final ParameterMapper pm = new ParameterMapper(this.param);
-			pm.checkParam();
-			final String[] mailto = pm.convertMappingTexts(this.mail.getToEmail());
-			final String[] mailcc = pm.convertMappingTexts(StringUtil.trim(this.mail.getToCC()));
-			final String[] mailbcc = pm.convertMappingTexts(StringUtil.trim(this.mail.getToBCC()));
-			final String[] subject = pm.convertMappingTexts(this.mail.getSubject());
-			final String[] body = pm.convertMappingTexts(this.mail.getBody());
-			this.resultValue = this.mail.isThread() ? false : true;
-
-			for (int i = 0; i < mailto.length; i++)
+			// 혹시 매핑된 값이 하나인 경우가 있을 경우에 대한 대비
+			final String cc = (mailcc.length == 1) ? mailcc[0] : mailcc[i];
+			final String bcc = (mailbcc.length == 1) ? mailbcc[0] : mailbcc[i];
+			final String title = (subject.length == 1) ? subject[0] : subject[i];
+			final String contents = (body.length == 1) ? body[0] : body[i];
+			final MailSender ms = new MailSender(this.mailSession, mailto[i], cc, bcc, title, contents, this.mail.getType(), this.mail.getCharset());
+			if (this.mail.isThread())
 			{
-				// 혹시 매핑된 값이 하나인 경우가 있을 경우에 대한 대비
-				final String cc = (mailcc.length == 1) ? mailcc[0] : mailcc[i];
-				final String bcc = (mailbcc.length == 1) ? mailbcc[0] : mailbcc[i];
-				final String title = (subject.length == 1) ? subject[0] : subject[i];
-				final String contents = (body.length == 1) ? body[0] : body[i];
-				final MailSender ms = new MailSender(this.mailSession, mailto[i], cc, bcc, title, contents, this.mail.getType(), this.mail.getCharset());
-				if (this.mail.isThread())
-				{
-					ThreadPool.getInstance().assign(ms);
-				}
-				else
-				{
-					ms.send();
-				}
+				ThreadPool.getInstance().assign(ms);
 			}
-			this.resultValue = true;
+			else
+			{
+				ms.send();
+			}
 		}
-		catch (final Exception e)
-		{
-			throw e;
-		}
+		this.resultValue = true;
 	}
 
 	public Map<String, Object> getValueObject ()

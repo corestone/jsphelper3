@@ -88,13 +88,13 @@ public class Upload implements ServiceObject
 	/**
 	 * @param saveDir
 	 */
-	public void setDir (String dir)
+	public void setDir (String saveDir)
 	{
-		if (!dir.endsWith("/"))
+		if (!saveDir.endsWith("/"))
 		{
-			dir += "/";
+			saveDir += "/";
 		}
-		this.dir = dir;
+		this.dir = saveDir;
 	}
 
 	public void setId (final String id)
@@ -103,7 +103,7 @@ public class Upload implements ServiceObject
 	}
 
 	/**
-	 * @param listSize
+	 * @param limit
 	 */
 	public void setLimit (final String limit)
 	{

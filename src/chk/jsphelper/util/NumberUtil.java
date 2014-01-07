@@ -1,18 +1,18 @@
 package chk.jsphelper.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringUtils;
-
-public class NumberUtil
+public final class NumberUtil
 {
 	private static NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
 
 	/**
 	 * 숫자형 문자열을 로케이션의 포맷에 맞추어서 출력하는 메소드이다.
 	 * 
-	 * @param src
+	 * @param num
 	 *            - 숫자형 문자열
 	 * @return - 컴마가 찍혀서 반환된 숫자형 문자열
 	 */
@@ -32,7 +32,7 @@ public class NumberUtil
 	 * 숫자형 문자열을 로케이션의 포맷에 맞추어서 출력하는 메소드이다.<br>
 	 * 두번째 인자를 통해 소수점 출력자리수를 정할 수 있다.
 	 * 
-	 * @param src
+	 * @param num
 	 *            - 숫자형의 문자열
 	 * @param slen
 	 *            - 출력할 소수점 자리수
@@ -40,7 +40,7 @@ public class NumberUtil
 	 */
 	public static String formatNumber (final String num, final int slen)
 	{
-		String formatValue = null;
+		String formatValue;
 		NumberUtil.nf.setMaximumFractionDigits(slen);
 		NumberUtil.nf.setMinimumFractionDigits(slen);
 		if (num.replaceAll("[\\d|\\.]+", "").length() == 0)
@@ -66,7 +66,7 @@ public class NumberUtil
 	public static double getAverage (final double[] data)
 	{
 		double sum = 0;
-		double mean = 0;
+		double mean;
 		for (final double element : data)
 		{
 			sum += element;
@@ -105,7 +105,7 @@ public class NumberUtil
 			case 3 :
 				return "3rd";
 			default :
-				return String.valueOf(iValue) + "th";
+				return iValue + "th";
 		}
 	}
 
@@ -119,7 +119,7 @@ public class NumberUtil
 	public static double getStanDev (final double[] data)
 	{
 		double ss = 0;
-		double var = 0;
+		double var;
 		final double average = NumberUtil.getAverage(data);
 		for (final double element : data)
 		{

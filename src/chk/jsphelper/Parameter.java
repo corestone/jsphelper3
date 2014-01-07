@@ -1,20 +1,18 @@
 package chk.jsphelper;
 
+import chk.jsphelper.module.wrapper.MapStringsAdapter;
+import chk.jsphelper.util.EncryptUtil;
+import chk.jsphelper.util.StringUtil;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Enumeration;
-import java.util.Iterator;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import chk.jsphelper.module.wrapper.MapWrapper;
-import chk.jsphelper.util.EncryptUtil;
-import chk.jsphelper.util.StringUtil;
+import java.util.Map;
 
 /**
  * 이 클래스는 HashMap<String, String[]>을 상속받은 클래스로 프레임웤에서 변수를 주고 받을 수 있는 벨류오브젝트이다. <br>
@@ -26,7 +24,7 @@ import chk.jsphelper.util.StringUtil;
  * @version 1.0
  * @since 1.0
  */
-public class Parameter extends MapWrapper
+public class Parameter extends MapStringsAdapter
 {
 	/**
 	 * 
@@ -251,20 +249,18 @@ public class Parameter extends MapWrapper
 	public final String getString ()
 	{
 		final StringBuilder sb = new StringBuilder();
-		String retValue = null;
+		String retValue;
 		if (this.formKey == null)
 		{
-			final Iterator<String> element = this.m.keySet().iterator();
-			while (element.hasNext())
+			for (Map.Entry<String, String[]> entry : this.m.entrySet())
 			{
-				final String key = element.next();
-				if ((key.indexOf("_") < 0))
+				if (!entry.getKey().contains("_"))
 				{
-					for (final String value : this.m.get(key))
+					for (final String value : entry.getValue())
 					{
 						try
 						{
-							sb.append("&" + key + "=" + URLEncoder.encode(value, "UTF-8"));
+							sb.append("&").append(entry.getKey()).append("=").append(URLEncoder.encode(value, "UTF-8"));
 						}
 						catch (final UnsupportedEncodingException e)
 						{
@@ -283,7 +279,7 @@ public class Parameter extends MapWrapper
 					{
 						try
 						{
-							sb.append("&" + indexName + "=" + URLEncoder.encode(value, "UTF-8"));
+							sb.append("&").append(indexName).append("=").append(URLEncoder.encode(value, "UTF-8"));
 						}
 						catch (final UnsupportedEncodingException e)
 						{
@@ -305,7 +301,7 @@ public class Parameter extends MapWrapper
 					{
 						try
 						{
-							sb.append("&" + key + "=" + URLEncoder.encode(val, "UTF-8"));
+							sb.append("&").append(key).append("=").append(URLEncoder.encode(val, "UTF-8"));
 						}
 						catch (final UnsupportedEncodingException e)
 						{
@@ -315,7 +311,7 @@ public class Parameter extends MapWrapper
 				}
 				else
 				{
-					sb.append("&" + key + "=");
+					sb.append("&").append(key).append("=");
 				}
 			}
 		}

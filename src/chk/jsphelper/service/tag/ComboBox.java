@@ -1,17 +1,15 @@
 package chk.jsphelper.service.tag;
 
-import java.io.IOException;
+import chk.jsphelper.Constant;
+import chk.jsphelper.DataList;
+import chk.jsphelper.util.StringUtil;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.apache.commons.lang3.ArrayUtils;
-
-import chk.jsphelper.Constant;
-import chk.jsphelper.DataList;
-import chk.jsphelper.util.StringUtil;
+import java.io.IOException;
 
 public class ComboBox extends TagSupport
 {
@@ -31,19 +29,19 @@ public class ComboBox extends TagSupport
 	public int doStartTag () throws JspException
 	{
 		final StringBuilder sb1 = new StringBuilder("<select");
-		sb1.append(" id=\"" + StringUtil.trimDefault(this.id, this.name) + "\" name=\"" + this.name + "\"");
+		sb1.append (" id=\"").append (StringUtil.trimDefault (this.id, this.name)).append ("\" name=\"").append (this.name).append ("\"");
 		if (this.onchange.length() > 0)
 		{
-			sb1.append(" onchange=\"" + this.onchange + "\"");
+			sb1.append (" onchange=\"").append (this.onchange).append ("\"");
 		}
 		if (this.attribute.length() > 0)
 		{
-			sb1.append(" " + this.attribute);
+			sb1.append (" ").append (this.attribute);
 		}
 		sb1.append(">");
-		if (!this.title.toLowerCase().equals("remove"))
+		if (!this.title.equalsIgnoreCase("remove"))
 		{
-			sb1.append("<option value=\"\">" + this.title + "</option>");
+			sb1.append ("<option value=\"\">").append (this.title).append ("</option>");
 		}
 		if (this.dl == null)
 		{
@@ -56,15 +54,15 @@ public class ComboBox extends TagSupport
 		final String[] groups = this.dl.getFieldData(3);
 		if (values.length > 0)
 		{
-			sb2.append("<option value=\"" + values[0] + "\"" + (values[0].equals(this.value) ? " selected=\"selected\"" : "") + ">" + texts[0] + "</option>");
+			sb2.append ("<option value=\"").append (values[0]).append ("\"").append (values[0].equals (this.value) ? " selected=\"selected\"" : "").append (">").append (texts[0]).append ("</option>");
 		}
 		for (int i = 1, z = values.length; i < z; i++)
 		{
 			if (this.group && !groups[i].equals(groups[i - 1]))
 			{
-				sb2.append("</optgroup><optgroup label=\"" + groups[i - 1] + "\">");
+				sb2.append ("</optgroup><optgroup label=\"").append (groups[i - 1]).append ("\">");
 			}
-			sb2.append("<option value=\"" + values[i] + "\"" + (values[i].equals(this.value) ? " selected=\"selected\"" : "") + ">" + texts[i] + "</option>");
+			sb2.append ("<option value=\"").append (values[i]).append ("\"").append (values[i].equals (this.value) ? " selected=\"selected\"" : "").append (">").append (texts[i]).append ("</option>");
 		}
 		final JspWriter out = this.pageContext.getOut();
 		try

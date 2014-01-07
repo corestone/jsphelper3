@@ -1,16 +1,12 @@
 package chk.jsphelper.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.Properties;
-
 import chk.jsphelper.Constant;
 import chk.jsphelper.module.runnable.StreamGobbler;
 
-public class SystemUtil
+import java.io.*;
+import java.util.Properties;
+
+public final class SystemUtil
 {
 	/**
 	 * 메일주소 @ 뒤의 도메인의 유효성검사하기<br>
@@ -21,10 +17,10 @@ public class SystemUtil
 		boolean result = false;
 		if ((email != null) && !"".equals(email))
 		{
-			final String domain = email.substring(email.indexOf("@") + 1);
+			final String domain = email.substring(email.indexOf('@') + 1);
 			final String[] cmd = { "nslookup", "-type=MX", domain };
 			final String print = SystemUtil.getCmd(cmd);
-			if (print.indexOf("mail exchanger") != -1)
+			if (print.contains("mail exchanger"))
 			{
 				result = true;
 			}
@@ -47,7 +43,7 @@ public class SystemUtil
 	{
 		try
 		{
-			String[] runCmd = null;
+			String[] runCmd;
 			if (System.getProperty("os.name").startsWith("Win"))
 			{
 				runCmd = new String[cmd.length + 2];
@@ -57,8 +53,8 @@ public class SystemUtil
 				runCmd[1] = "/c";
 				final Process p = new ProcessBuilder(runCmd).start();
 
-				final StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream(), "Error");
-				final StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), "Output");
+				final StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream());
+				final StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream());
 				errorGobbler.start();
 				outputGobbler.start();
 				p.waitFor();
@@ -77,10 +73,10 @@ public class SystemUtil
 				final InputStream in = p.getInputStream();
 				final BufferedReader br = new BufferedReader(new InputStreamReader(in));
 				final StringBuilder sb = new StringBuilder();
-				String temp = "";
+				String temp;
 				while ((temp = br.readLine()) != null)
 				{
-					sb.append(temp + "\n");
+					sb.append(temp).append("\n");
 				}
 				br.close();
 				in.close();
@@ -98,14 +94,14 @@ public class SystemUtil
 	 * 시스템 환경설정 파일을 읽어와서 이름에 대한 값을 반환하는 메소드<br>
 	 * 예) SystemUtil.getEnv("JAVA_HOME") = 시스템의 JAVA_HOME 경로
 	 * 
-	 * @param envname
+	 * @param envName
 	 *            - 환경변수 명
 	 * @return - 해당하는 환경변수에 따른 값
 	 * @throws Exception
 	 */
-	public static String getEnv (final String envname) throws Exception
+	public static String getEnv (final String envName) throws Exception
 	{
-		String envval = System.getProperty(envname);
+		String envval = System.getProperty(envName);
 
 		if (envval != null)
 		{
@@ -116,7 +112,7 @@ public class SystemUtil
 
 		if (osName.startsWith("Win"))
 		{
-			envval = SystemUtil.getCmd("echo %" + envname + "%");
+			envval = SystemUtil.getCmd("echo %" + envName + "%");
 		}
 		else
 		{
@@ -124,7 +120,7 @@ public class SystemUtil
 			ps.waitFor();
 			final Properties prop = new Properties();
 			prop.load(ps.getInputStream());
-			envval = prop.getProperty(envname);
+			envval = prop.getProperty(envName);
 		}
 
 		if (envval == null)
@@ -145,14 +141,14 @@ public class SystemUtil
 	{
 		final StringBuilder sb = new StringBuilder();
 		int offset = 0;
-		int fromIndex = 0, toIndex = 0;
+		int fromIndex, toIndex;
 		while ((fromIndex = value.indexOf("${", offset)) != -1)
 		{
 			if (fromIndex > offset)
 			{
 				sb.append(value.substring(offset, fromIndex));
 			}
-			toIndex = value.indexOf("}", fromIndex);
+			toIndex = value.indexOf('}', fromIndex);
 			if (toIndex == -1)
 			{
 				break;
@@ -178,40 +174,6 @@ public class SystemUtil
 			sb.append(value.substring(offset));
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * 한글의 인코딩이 어떻게 변하는지 테스트를 하는 메소드이다
-	 * 한글 인코딩을 변화하면서 인코딩을 한 결과를 로그에 남긴다.
-	 * 
-	 * @param hanText
-	 *            - 테스트할 한글문자열
-	 */
-	public static void testHanEncoding (final String hanText)
-	{
-		Constant.getLogger().debug("[TEST] 변환전 : {}", new Object[] { hanText });
-		final String charset[] = { "8859_1", "ascii", "UTF-8", "KSC5601", "EUC-KR", "MS949" };
-		try
-		{
-			for (int i = 0; i < charset.length; i++)
-			{
-				for (int j = 0; j < charset.length; j++)
-				{
-					if (i == j)
-					{
-						continue;
-					}
-					else
-					{
-						Constant.getLogger().debug("[TEST] {} -> {} : {}", new Object[] { charset[i], charset[j], new String(hanText.getBytes(charset[i]), charset[j]) });
-					}
-				}
-			}
-		}
-		catch (final UnsupportedEncodingException uee)
-		{
-			Constant.getLogger().error(uee.getLocalizedMessage(), uee);
-		}
 	}
 
 	private SystemUtil ()

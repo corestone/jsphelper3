@@ -1,9 +1,10 @@
 package chk.jsphelper.value.setter;
 
-import java.util.Map;
-
+import chk.jsphelper.Constant;
 import chk.jsphelper.DataList;
 import chk.jsphelper.value.SqlValue;
+
+import java.util.Map;
 
 public class SqlValueSetter extends SqlValue implements ValueSetter
 {
@@ -12,7 +13,7 @@ public class SqlValueSetter extends SqlValue implements ValueSetter
 		super(functionID);
 	}
 
-	public SqlValue getValue () throws CloneNotSupportedException
+	public SqlValue getValue ()
 	{
 		try
 		{
@@ -20,8 +21,9 @@ public class SqlValueSetter extends SqlValue implements ValueSetter
 		}
 		catch (final CloneNotSupportedException cnse)
 		{
-			throw cnse;
+			Constant.getLogger().error("SqlValueSetter.getValue에서 에러 발생 {}", new Object[] {cnse.getMessage()}, cnse);
 		}
+		return null;
 	}
 
 	public final void setSuccess (final boolean success)

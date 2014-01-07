@@ -1,14 +1,13 @@
 package chk.jsphelper.module.pool;
 
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import chk.jsphelper.Constant;
 import chk.jsphelper.ObjectFactory;
 import chk.jsphelper.module.wrapper.ConnWrapper;
 import chk.jsphelper.object.enums.ObjectType;
+
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConnectionPoolManager
 {
@@ -32,10 +31,8 @@ public class ConnectionPoolManager
 	{
 		try
 		{
-			final Iterator<String> element = ObjectFactory.getObjectIDs(ObjectType._DATASOURCE);
-			while (element.hasNext())
+			for (String key : ObjectFactory.getObjectIDs(ObjectType._DATASOURCE))
 			{
-				final String key = element.next();
 				this.poolContainer.put(key, new ConnectionPool(ObjectFactory.getDataSource(key)));
 			}
 		}
@@ -87,10 +84,8 @@ public class ConnectionPoolManager
 	 */
 	public void releaseAll () throws Exception
 	{
-		final Iterator<String> keys = this.poolContainer.keySet().iterator();
-		while (keys.hasNext())
+		for (String key : this.poolContainer.keySet())
 		{
-			final String key = keys.next();
 			this.getPool(key).releaseAll();
 		}
 	}
@@ -100,7 +95,6 @@ public class ConnectionPoolManager
 	 * @param conn
 	 * @param serviceID
 	 * @param isSucess
-	 * @throws Exception
 	 */
 	public void releaseConnection (final String datasourceID, final ConnWrapper conn, final String serviceID, final boolean isSucess)
 	{

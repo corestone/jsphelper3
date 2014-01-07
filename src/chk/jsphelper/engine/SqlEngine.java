@@ -1,19 +1,10 @@
 package chk.jsphelper.engine;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import chk.jsphelper.Constant;
 import chk.jsphelper.ObjectFactory;
 import chk.jsphelper.Parameter;
 import chk.jsphelper.engine.ext.sql.CallableStatementManager;
-import chk.jsphelper.engine.ext.sql.DataUtil;
+import chk.jsphelper.engine.ext.sql.DbDataUtil;
 import chk.jsphelper.engine.ext.sql.DmlType;
 import chk.jsphelper.engine.ext.sql.PreparedStatementManager;
 import chk.jsphelper.module.mapper.DataMapper;
@@ -22,6 +13,14 @@ import chk.jsphelper.module.wrapper.ConnWrapper;
 import chk.jsphelper.object.DataSource;
 import chk.jsphelper.object.Sql;
 import chk.jsphelper.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Corestone
@@ -58,57 +57,47 @@ public class SqlEngine implements InterfaceEngine
 	{
 		boolean isPaging = false;
 
-		try
+		Constant.getLogger().debug("바인드 갯수 : {}", this.sql.getBinds().size());
+
+		isPaging = this.sql.isPaging();
+
+		// sql문에서 쿼리 타입을 찾아내고 XML문에 정의 되어 있으면 그것으로 강제세팅을 한다.
+		final DmlType dmlType = this.checkDMLType();
+
+		final ParameterMapper pm = new ParameterMapper(this.param);
+		pm.checkParamQuery(this.sql.getQuery(), this.sql.getBinds());
+		final String[] queries = pm.convertMappingTexts(this.sql.getQuery());
+
+		if (isPaging)
 		{
-			Constant.getLogger().debug("바인드 갯수 : {}", this.sql.getBinds().size());
-
-			isPaging = this.sql.isPaging();
-
-			// sql문에서 쿼리 타입을 찾아내고 XML문에 정의 되어 있으면 그것으로 강제세팅을 한다.
-			final DmlType dmlType = this.checkDMLType();
-
-			final ParameterMapper pm = new ParameterMapper(this.param);
-			pm.checkParamQuery(this.sql.getQuery(), this.sql.getBinds());
-			final String[] queries = pm.convertMappingTexts(this.sql.getQuery());
-
-			if (isPaging)
+			if (dmlType != DmlType.SELECT)
 			{
-				if (dmlType != DmlType.SELECT)
-				{
-					throw new Exception(this.logID + "는 SELECT 절이 아닌데도 페이징처리가 정의되어 있습니다.");
-				}
-				if (!this.param.containsKey(Constant.getValue("KeyName.LinePerPage", "_linePerPage")))
-				{
-					throw new Exception(this.logID + "에서 페이징 처리를 위한 파라미터가 정의되지 않았습니다.");
-				}
-				if (this.param.getCurrentIndex() == -1)
-				{
-					throw new Exception(this.logID + "에서 페이징 처리를 위한 파라미터의 설정인덱스가 세팅되지 않았습니다.");
-				}
+				throw new Exception(this.logID + "는 SELECT 절이 아닌데도 페이징처리가 정의되어 있습니다.");
 			}
-
-			synchronized (this.conn)
+			if (!this.param.containsKey(Constant.getValue("KeyName.LinePerPage", "_linePerPage")))
 			{
-				if (dmlType == DmlType.SELECT)
-				{
-					this.executeQuery(queries[0], isPaging);
-				}
-				else if (dmlType == DmlType.PROCEDURE)
-				{
-					this.executeProc(queries[0], pm);
-				}
-				else
-				{
-					this.updateCount = this.executeUpdate(queries, pm);
-				}
+				throw new Exception(this.logID + "에서 페이징 처리를 위한 파라미터가 정의되지 않았습니다.");
+			}
+			if (this.param.getCurrentIndex() == -1)
+			{
+				throw new Exception(this.logID + "에서 페이징 처리를 위한 파라미터의 설정인덱스가 세팅되지 않았습니다.");
 			}
 		}
-		catch (final Exception e)
+
+		synchronized (this.conn)
 		{
-			throw e;
-		}
-		finally
-		{
+			if (dmlType == DmlType.SELECT)
+			{
+				this.executeQuery(queries[0], isPaging);
+			}
+			else if (dmlType == DmlType.PROCEDURE)
+			{
+				this.executeProc(queries[0], pm);
+			}
+			else
+			{
+				this.updateCount = this.executeUpdate(queries, pm);
+			}
 		}
 	}
 
@@ -124,9 +113,8 @@ public class SqlEngine implements InterfaceEngine
 
 	private DmlType checkDMLType ()
 	{
-		String chkquery = "";
 		final String temp = StringUtil.compressWhitespace(this.sql.getQuery());
-		chkquery = temp.substring(0, temp.indexOf(" "));
+		String chkquery = temp.substring(0, temp.indexOf(' '));
 
 		if (chkquery.equalsIgnoreCase("SELECT"))
 		{
@@ -146,14 +134,14 @@ public class SqlEngine implements InterfaceEngine
 		}
 	}
 
-	private boolean executeProc (final String currentQuery, final ParameterMapper paramMapper) throws SQLException, Exception
+	private boolean executeProc (final String currentQuery, final ParameterMapper paramMapper) throws Exception
 	{
 		final CallableStatementManager csm = new CallableStatementManager(this.sql.getBinds(), this.param);
 		boolean isSuccess = true;
 
 		try
 		{
-			Constant.getLogger().info("QUERY ({}) :\n{}", new String[] { this.logID, currentQuery });
+			Constant.getLogger().info("QUERY ({}) :\n{}", new Object[] { this.logID, currentQuery });
 			for (int i = 0, z = paramMapper.getMappingSize(); i < z; i++)
 			{
 				csm.bindingCS(this.conn, currentQuery, i);
@@ -175,7 +163,7 @@ public class SqlEngine implements InterfaceEngine
 		catch (final SQLException sqle)
 		{
 			isSuccess = false;
-			Constant.getLogger().error(" Invalid Query ({}) : {}", new String[] { this.logID, currentQuery });
+			Constant.getLogger().error(" Invalid Query ({}) : {}", new Object[] { this.logID, currentQuery });
 			throw sqle;
 		}
 		catch (final Exception e)
@@ -188,7 +176,7 @@ public class SqlEngine implements InterfaceEngine
 
 	private void executeQuery (final String currentQuery, final boolean isPaging) throws SQLException, Exception
 	{
-		ResultSet rtnRS = null;
+		ResultSet rtnRS;
 		final StringBuilder countQuery = new StringBuilder();
 		final StringBuilder pagingQuery = new StringBuilder();
 		final PreparedStatementManager psm = new PreparedStatementManager(this.sql.getBinds(), this.param);
@@ -205,7 +193,7 @@ public class SqlEngine implements InterfaceEngine
 					lastIndex = currentQuery.length();
 				}
 				// 쿼리에서 FROM 절까지의 위치 (인라인 쿼리를 위해 "#FROM"으로 강제로 FROM 위치를 세팅할 수 있다.)
-				int startIndex = currentQuery.lastIndexOf("#") + 1;
+				int startIndex = currentQuery.lastIndexOf('#') + 1;
 				if (startIndex < 1)
 				{
 					startIndex = currentQuery.toUpperCase().indexOf("FROM");
@@ -226,10 +214,10 @@ public class SqlEngine implements InterfaceEngine
 				countQuery.append(" ");
 				countQuery.append(currentQuery.substring(braceIndex));
 
-				Constant.getLogger().info("Counter Query ({}):\n{}", new String[] { this.logID, countQuery.toString() });
+				Constant.getLogger().info("Counter Query ({}):\n{}", new Object[] { this.logID, countQuery.toString() });
 				psm.bindingPS(this.conn, countQuery.toString());
 				rtnRS = psm.executeQuery();
-				Constant.getLogger().info("{}의 실행시간 : {}", new String[] { this.logID, psm.getExecuteTime() });
+				Constant.getLogger().info("{}의 실행시간 : {}", new Object[] { this.logID, psm.getExecuteTime() });
 
 				if (rtnRS.next())
 				{
@@ -271,24 +259,21 @@ public class SqlEngine implements InterfaceEngine
 						pagingVar2 = iLinePerPage;
 						break;
 				}
-				Constant.getLogger().info("Paging QUERY ({}):\n{}", new String[] { this.logID, pagingQuery.toString() });
+				Constant.getLogger().info("Paging QUERY ({}):\n{}", new Object[] { this.logID, pagingQuery.toString() });
 				psm.bindingPS4Paging(this.conn, pagingQuery.toString(), pagingVar1, pagingVar2);
 				rtnRS = psm.executeQuery();
-				Constant.getLogger().info("{}의 실행시간 : {}", new String[] { this.logID, psm.getExecuteTime() });
+				Constant.getLogger().info("{}의 실행시간 : {}", new Object[] { this.logID, psm.getExecuteTime() });
 			}
 			else
 			{
-				Constant.getLogger().info("QUERY ({}) :\n{}", new String[] { this.logID, currentQuery });
+				Constant.getLogger().info("QUERY ({}) :\n{}", new Object[] { this.logID, currentQuery });
 				if (currentQuery.toUpperCase().indexOf("FOR UPDATE") > 1)
 				{
 					this.isClobUpdate = true;
 				}
 				psm.bindingPS(this.conn, currentQuery);
 				rtnRS = psm.executeQuery();
-				Constant.getLogger().info("{}의 실행시간 : {}", new String[] { this.logID, psm.getExecuteTime() });
-			}
-			if (rtnRS == null)
-			{
+				Constant.getLogger().info("{}의 실행시간 : {}", new Object[] { this.logID, psm.getExecuteTime() });
 			}
 			if (this.isClobUpdate)
 			{
@@ -301,12 +286,8 @@ public class SqlEngine implements InterfaceEngine
 		}
 		catch (final SQLException sqle)
 		{
-			Constant.getLogger().error(" Invalid Query ({}) :\n{}", new String[] { this.logID, psm.getQueryString() });
+			Constant.getLogger().error(" Invalid Query ({}) :\n{}", new Object[] { this.logID, psm.getQueryString() });
 			throw sqle;
-		}
-		catch (final Exception e)
-		{
-			throw e;
 		}
 	}
 
@@ -319,7 +300,7 @@ public class SqlEngine implements InterfaceEngine
 			// 쿼리에 바인드 되는 파라미터의 갯수가 하나라서 쿼리가 하나인 경우
 			if (queries.length == 1)
 			{
-				Constant.getLogger().info("QUERY ({}) :\n{}", new String[] { this.logID, queries[0] });
+				Constant.getLogger().info("QUERY ({}) :\n{}", new Object[] { this.logID, queries[0] });
 				// 파라미터의 갯수가 1개일 경우 (바인드가 한번만 될 때)
 				if (paramMapper.getMappingSize() == 1)
 				{
@@ -341,7 +322,7 @@ public class SqlEngine implements InterfaceEngine
 						applyCount += applyCount2;
 					}
 				}
-				Constant.getLogger().info("{}의 실행시간 : {}", new String[] { this.logID, psm.getExecuteTime() });
+				Constant.getLogger().info("{}의 실행시간 : {}", new Object[] { this.logID, psm.getExecuteTime() });
 			}
 			// 쿼리에 바인드 되는 파라미터의 갯수가 여러개라서 쿼리와 파라미터 배열의 크기가 같은 경우
 			else if (queries.length == paramMapper.getMappingSize())
@@ -349,7 +330,7 @@ public class SqlEngine implements InterfaceEngine
 				final int[] applyCounts = new int[queries.length];
 				for (int i = 0, z = paramMapper.getMappingSize(); i < z; i++)
 				{
-					Constant.getLogger().info("QUERY ({}) :\n{}", new String[] { this.logID, queries[i] });
+					Constant.getLogger().info("QUERY ({}) :\n{}", new Object[] { this.logID, queries[i] });
 					psm.bindingPS(this.conn, queries[i], i);
 					applyCounts[i] = psm.executeUpdate();
 				}
@@ -357,7 +338,7 @@ public class SqlEngine implements InterfaceEngine
 				{
 					applyCount += applyCount2;
 				}
-				Constant.getLogger().info("{}의 실행시간 : {} (마지막 건)", new String[] { this.logID, psm.getExecuteTime() });
+				Constant.getLogger().info("{}의 실행시간 : {} (마지막 건)", new Object[] { this.logID, psm.getExecuteTime() });
 			}
 			// 쿼리의 갯수와 바인드 되는 배열의 크기가 다른 경우 에러임
 			else
@@ -372,32 +353,21 @@ public class SqlEngine implements InterfaceEngine
 		}
 		catch (final SQLException sqle)
 		{
-			Constant.getLogger().error("Invalid Query ({}) :\n{}", new String[] { this.logID, psm.getQueryString() });
+			Constant.getLogger().error("Invalid Query ({}) :\n{}", new Object[] { this.logID, psm.getQueryString() });
 			throw sqle;
-		}
-		catch (final Exception e)
-		{
-			throw e;
 		}
 	}
 
 	private void updateCLOB (final ResultSet rs) throws Exception
 	{
-		try
+		if (rs.next())
 		{
-			if (rs.next())
+			for (int i = 0; i < this.sql.getClobs().size(); i++)
 			{
-				for (int i = 0; i < this.sql.getClobs().size(); i++)
-				{
-					final Map<String, String> clob = this.sql.getClobs().get(i);
-					DataUtil.setClobData(rs, clob.get("FIELD"), this.param.getValue(clob.get("VALUE")));
-					Constant.getLogger().debug("{}필드에 CLOB으로 {}값 기록", new String[] { clob.get("FIELD"), clob.get("VALUE") });
-				}
+				final Map<String, String> clob = this.sql.getClobs().get(i);
+				DbDataUtil.setClobData(rs, clob.get("FIELD"), this.param.getValue(clob.get("VALUE")));
+				Constant.getLogger().debug("{}필드에 CLOB으로 {}값 기록", new Object[] { clob.get("FIELD"), clob.get("VALUE") });
 			}
-		}
-		catch (final Exception e)
-		{
-			throw e;
 		}
 	}
 }

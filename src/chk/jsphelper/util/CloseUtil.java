@@ -1,13 +1,13 @@
 package chk.jsphelper.util;
 
-import java.io.Closeable;
-
 import chk.jsphelper.module.wrapper.ConnWrapper;
+
+import java.io.Closeable;
 
 /**
  * @author Corestone
  */
-public class CloseUtil
+public final class CloseUtil
 {
 	/**
 	 * @param object

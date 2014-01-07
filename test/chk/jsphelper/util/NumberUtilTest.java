@@ -1,7 +1,8 @@
 package chk.jsphelper.util;
 
-import static org.junit.Assert.*;
 import static chk.jsphelper.util.NumberUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class NumberUtilTest
 	@Test
 	public void testGetAverage ()
 	{
-		final double[] data = new double[] {8,9,10,11,12};
+		final double[] data = new double[] { 8, 9, 10, 11, 12 };
 		assertTrue(getAverage(data) == 10);
 	}
 
@@ -35,7 +36,7 @@ public class NumberUtilTest
 	@Test
 	public void testGetStanDev ()
 	{
-		final double[] data = new double[] {8,9,10,11,12};
+		final double[] data = new double[] { 8, 9, 10, 11, 12 };
 		assertTrue(getStanDev(data) == 2.5);
 	}
 
@@ -45,7 +46,7 @@ public class NumberUtilTest
 		assertEquals("Z", int2Col(26));
 		assertEquals("AA", int2Col(27));
 		assertEquals("AU", int2Col(47));
-		assertEquals("AAA", int2Col(26*27+1));
+		assertEquals("AAA", int2Col(26 * 27 + 1));
 		assertEquals("XFD", int2Col(16384));
 	}
 

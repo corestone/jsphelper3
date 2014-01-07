@@ -1,20 +1,15 @@
 package chk.jsphelper.util;
 
+import chk.jsphelper.Constant;
+
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import chk.jsphelper.Constant;
-
-public class EncryptUtil
+public final class EncryptUtil
 {
 	private static String algorithm = "";
 	private static SecretKey secretKey = null;
@@ -191,7 +186,7 @@ public class EncryptUtil
 	/**
 	 * 문자열의 md5 값을 반환하는 메소드이다.
 	 * 
-	 * @param strMessage
+	 * @param value
 	 *            - md5값을 추출할 메소드
 	 * @return - md5값
 	 */
@@ -232,7 +227,7 @@ public class EncryptUtil
 			md = MessageDigest.getInstance("SHA-1");
 			md.update(new String(pwd).getBytes("UTF-8"));
 			final byte[] digested = md.digest();
-			return new String(EncryptUtil.getBase64Encode(digested));
+			return EncryptUtil.getBase64Encode(digested);
 		}
 		catch (final NoSuchAlgorithmException nsae)
 		{

@@ -1,12 +1,11 @@
 package chk.jsphelper.object;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import chk.jsphelper.object.enums.ObjectType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import chk.jsphelper.object.enums.ObjectType;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Message implements ServiceObject
 {
@@ -67,7 +66,7 @@ public class Message implements ServiceObject
 	}
 
 	/**
-	 * @param deflang
+	 * @param description
 	 */
 	public void setDescription (final String description)
 	{

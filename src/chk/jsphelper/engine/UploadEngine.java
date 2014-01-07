@@ -1,21 +1,5 @@
 package chk.jsphelper.engine;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.ArrayUtils;
-
 import chk.jsphelper.Constant;
 import chk.jsphelper.Parameter;
 import chk.jsphelper.engine.ext.upload.FileUploadListener;
@@ -23,6 +7,16 @@ import chk.jsphelper.module.mapper.ParameterMapper;
 import chk.jsphelper.object.Upload;
 import chk.jsphelper.util.FileUtil;
 import chk.jsphelper.util.StringUtil;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.ArrayUtils;
+
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 /**
  * @author Corestone
@@ -51,26 +45,19 @@ public class UploadEngine implements InterfaceEngine
 
 	public void execute () throws Exception
 	{
-		try
+		final ParameterMapper pm = new ParameterMapper(this.rtnParam);
+		pm.checkParam();
+		final boolean isMultipart = ServletFileUpload.isMultipartContent(this.rtnParam.getRequest());
+		if (!isMultipart)
 		{
-			final ParameterMapper pm = new ParameterMapper(this.rtnParam);
-			pm.checkParam();
-			final boolean isMultipart = ServletFileUpload.isMultipartContent(this.rtnParam.getRequest());
-			if (!isMultipart)
-			{
-				throw new Exception("form의 enctype을 'multipart/form-data'로 해야 업로드가 됩니다.");
-			}
-			// iter 를 모두 list로 변경해서 작업 내부적으로 계속 next를 사용하므로 업로드 안됨
-			this.uploadPath = pm.convertMappingText(this.upload.getDir());
-			FileUtil.createDir(this.uploadPath);
-			final List<FileItem> items = this.initUpload(pm);
-			this.setParameter(items);
-			this.uploadFile(pm, items);
+			throw new Exception("form의 enctype을 'multipart/form-data'로 해야 업로드가 됩니다.");
 		}
-		catch (final Exception e)
-		{
-			throw e;
-		}
+		// iter 를 모두 list로 변경해서 작업 내부적으로 계속 next를 사용하므로 업로드 안됨
+		this.uploadPath = pm.convertMappingText(this.upload.getDir());
+		FileUtil.createDir(this.uploadPath);
+		final List<FileItem> items = this.initUpload(pm);
+		this.setParameter(items);
+		this.uploadFile(pm, items);
 	}
 
 	public Map<String, Object> getValueObject ()
@@ -98,12 +85,12 @@ public class UploadEngine implements InterfaceEngine
 			isChange = false;
 			for (final String element : dirFiles)
 			{
-				if (newName.toUpperCase().equals(element.toUpperCase()))
+				if (newName.equalsIgnoreCase(element))
 				{
 					isChange = true;
 					fileIndex++;
 					newName = FileUtil.getNameWithoutExt(fileName) + "_" + fileIndex + "." + FileUtil.getExtension(fileName);
-					Constant.getLogger().info("업로드 파일 중에서 {}를 {}로 변경하여 업로드합니다.", new String[] { fileName, newName });
+					Constant.getLogger().info("업로드 파일 중에서 {}를 {}로 변경하여 업로드합니다.", new Object[] { fileName, newName });
 				}
 			}
 		}
@@ -118,11 +105,11 @@ public class UploadEngine implements InterfaceEngine
 			final int maxMemorySize = 1024 * 64; // threshold 값 설정
 			long maxRequestSize = 0;
 			final String maxSize = this.upload.getLimit();
-			if (maxSize.substring(maxSize.length() - 1).toUpperCase().equals("M"))
+			if (maxSize.substring(maxSize.length() - 1).equalsIgnoreCase ("M"))
 			{
 				maxRequestSize = 1024 * 1024 * Integer.parseInt(maxSize.substring(0, maxSize.length() - 1));
 			}
-			else if (maxSize.substring(maxSize.length() - 1).toUpperCase().equals("K"))
+			else if (maxSize.substring(maxSize.length() - 1).equalsIgnoreCase("K"))
 			{
 				maxRequestSize = 1024 * Integer.parseInt(maxSize.substring(0, maxSize.length() - 1));
 			}
@@ -150,7 +137,7 @@ public class UploadEngine implements InterfaceEngine
 
 			if (this.rtnParam.getRequest().getContentLength() > maxRequestSize)
 			{
-				Constant.getLogger().error("[{}]에서 업로드의 용량({})을 초과하는 {} byte가 들어왔습니다.", new String[] { this.upload.getId(), this.upload.getLimit(), String.valueOf(this.rtnParam.getRequest().getContentLength()) });
+				Constant.getLogger().error("[{}]에서 업로드의 용량({})을 초과하는 {} byte가 들어왔습니다.", new Object[] { this.upload.getId(), this.upload.getLimit(), String.valueOf(this.rtnParam.getRequest().getContentLength()) });
 				this.listener.setErrMsg("업로드 용량 " + this.upload.getLimit() + "을 초과해서 올릴 수 없습니다.");
 				return items;
 			}
@@ -195,23 +182,20 @@ public class UploadEngine implements InterfaceEngine
 					}
 				}
 			}
-
-			final Iterator<String> iterator = hm.keySet().iterator();
-			while (iterator.hasNext())
+			for (Map.Entry<String, List<String>> entry : hm.entrySet())
 			{
-				final String key = iterator.next();
-				final String[] temp = new String[hm.get(key).size()];
+				final String[] temp = new String[entry.getValue().size()];
 				for (int i = 0, z = temp.length; i < z; i++)
 				{
-					temp[i] = hm.get(key).get(i);
+					temp[i] = entry.getValue().get(i);
 				}
-				if (key.indexOf("_") == 0)
+				if (entry.getKey().indexOf("_") == 0)
 				{
-					this.rtnParam.underbarPut(key, temp[0]);
+					this.rtnParam.underbarPut(entry.getKey(), temp[0]);
 				}
 				else
 				{
-					this.rtnParam.put(key, temp);
+					this.rtnParam.put(entry.getKey(), temp);
 				}
 			}
 		}
@@ -260,13 +244,13 @@ public class UploadEngine implements InterfaceEngine
 						final String fileExt = FileUtil.getExtension(StringUtil.trim(oriFile).toUpperCase());
 						if (ArrayUtils.contains(denyExts, fileExt))
 						{
-							Constant.getLogger().warn("파일업로드 중 {}의 확장자 '{}'는 업로드 할 수 없는 확장자 중의 하나입니다.", new String[] { oriFile, fileExt });
+							Constant.getLogger().warn("파일업로드 중 {}의 확장자 '{}'는 업로드 할 수 없는 확장자 중의 하나입니다.", new Object[] { oriFile, fileExt });
 							this.listener.setErrMsg("파일업로드 중 " + oriFile + "의 확장자 '" + fileExt + "'는 업로드 할 수 없는 확장자 중의 하나입니다.");
 							continue;
 						}
 						else if (!(acceptExts.equals(ArrayUtils.EMPTY_STRING_ARRAY) || ArrayUtils.contains(acceptExts, fileExt)))
 						{
-							Constant.getLogger().warn("파일업로드 중 {}의 확장자 '{}'는 업로드 할 수 있는 확장자가 아닙니다.", new String[] { oriFile, fileExt });
+							Constant.getLogger().warn("파일업로드 중 {}의 확장자 '{}'는 업로드 할 수 있는 확장자가 아닙니다.", new Object[] { oriFile, fileExt });
 							this.listener.setErrMsg("파일업로드 중 " + oriFile + "의 확장자 '" + fileExt + "'는 업로드 할 수 있는 확장자가 아닙니다.");
 							continue;
 						}
@@ -282,7 +266,7 @@ public class UploadEngine implements InterfaceEngine
 						this.newFileName.add(newFile);
 						final File uploadedFile = new File(this.uploadPath + newFile);
 						item.write(uploadedFile);
-						Constant.getLogger().info("[{}]에서 파일 {}이 업로드 되었습니다.", new String[] { this.upload.getId(), this.uploadPath + newFile });
+						Constant.getLogger().info("[{}]에서 파일 {}이 업로드 되었습니다.", new Object[] { this.upload.getId(), this.uploadPath + newFile });
 					}
 				}
 			}

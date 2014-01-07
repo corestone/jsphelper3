@@ -1,7 +1,7 @@
 package chk.jsphelper.util;
 
-import static org.junit.Assert.*;
 import static chk.jsphelper.util.EncryptUtil.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class EncryptUtilTest
 		}
 		catch (Exception e)
 		{
-			
+
 		}
 	}
 
@@ -37,7 +37,7 @@ public class EncryptUtilTest
 		}
 		catch (Exception e)
 		{
-			
+
 		}
 	}
 

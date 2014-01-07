@@ -72,11 +72,9 @@ public class Templete
 		for (int i = 0; i < size; i++)
 		{
 			String value = sb.toString();
-			final Iterator<String> keys = mappingData.keySet().iterator();
-			while (keys.hasNext())
+			for (Map.Entry<String, List<String>> entry : mappingData.entrySet())
 			{
-				final String key = keys.next();
-				value = value.replace(Templete.START_VALUE + key + Templete.END_VALUE, mappingData.get(key).get(i));
+				value = value.replace(Templete.START_VALUE + entry.getKey() + Templete.END_VALUE, entry.getValue().get(i));
 			}
 			text.append(value);
 		}
@@ -100,11 +98,9 @@ public class Templete
 				continue;
 			}
 			String value = sb.toString();
-			final Iterator<String> keys = mappingObject.keySet().iterator();
-			while (keys.hasNext())
+			for(Map.Entry<String, String> entry : mappingObject.entrySet())
 			{
-				final String key = keys.next();
-				value = value.replace(Templete.START_VALUE + key + Templete.END_VALUE, mappingObject.get(key));
+				value = value.replace(Templete.START_VALUE + entry.getKey() + Templete.END_VALUE, entry.getValue());
 			}
 			text.append(value);
 		}
@@ -154,34 +150,29 @@ public class Templete
 		final Iterator<String> keys = mappingObject.keySet().iterator();
 		final Iterator<String> ifkeys = this.IfTemplete.keySet().iterator();
 		final Iterator<String> loopkeys = this.LoopTemplete.keySet().iterator();
-		while (keys.hasNext())
+		for (Map.Entry<String, String> entry : mappingObject.entrySet())
 		{
-			final String key = keys.next();
-			final String code = Templete.START_VALUE + key + Templete.END_VALUE;
+			final String code = Templete.START_VALUE + entry.getKey() + Templete.END_VALUE;
 
-			this.TempleteString.replaceAll(code, mappingObject.get(key));
-			while (ifkeys.hasNext())
+			this.TempleteString.replaceAll(code, entry.getValue());
+			for (Map.Entry<String, StrBuilder> entry1 : IfTemplete.entrySet())
 			{
-				final String ifkey = ifkeys.next();
-				this.IfTemplete.get(ifkey).replaceAll(code, mappingObject.get(key));
+				entry1.getValue().replaceAll(code, entry.getValue());
 			}
-			while (loopkeys.hasNext())
+			for (Map.Entry<String, StrBuilder> entry1 : LoopTemplete.entrySet())
 			{
-				final String loopkey = loopkeys.next();
-				this.LoopTemplete.get(loopkey).replaceAll(code, mappingObject.get(key));
+				entry1.getValue().replaceAll(code, entry.getValue());
 			}
 		}
 	}
 
 	public void showIfBlock (final List<String> showIfBlockList)
 	{
-		final Iterator<String> ifkey = this.IfTemplete.keySet().iterator();
-		while (ifkey.hasNext())
+		for (Map.Entry<String, StrBuilder> entry : this.IfTemplete.entrySet())
 		{
-			final String key = ifkey.next();
-			if (!showIfBlockList.contains(key))
+			if (!showIfBlockList.contains(entry.getKey()))
 			{
-				this.IfTemplete.get(key).setLength(0);
+				entry.getValue().setLength(0);
 			}
 		}
 	}
@@ -191,17 +182,13 @@ public class Templete
 	{
 		final StrBuilder sb = new StrBuilder();
 		sb.appendln(this.TempleteString);
-		final Iterator<String> ifkey = this.IfTemplete.keySet().iterator();
-		while (ifkey.hasNext())
+		for (Map.Entry<String, StrBuilder> entry : this.IfTemplete.entrySet())
 		{
-			final String key = ifkey.next();
-			sb.appendln(this.IfTemplete.get(key));
+			sb.appendln(entry.getValue());
 		}
-		final Iterator<String> loopkey = this.LoopTemplete.keySet().iterator();
-		while (loopkey.hasNext())
+		for (Map.Entry<String, StrBuilder> entry : this.LoopTemplete.entrySet())
 		{
-			final String key = loopkey.next();
-			sb.appendln(this.LoopTemplete.get(key));
+			sb.appendln(entry.getValue());
 		}
 		return sb.toString();
 	}
@@ -231,13 +218,11 @@ public class Templete
 
 	private boolean parseBlock (final Map<String, StrBuilder> sourceTemplete, final Map<String, StrBuilder> targetValue, final String code, final String block)
 	{
-		final Iterator<String> keys = sourceTemplete.keySet().iterator();
-		while (keys.hasNext())
+		for (Map.Entry<String, StrBuilder> entry : sourceTemplete.entrySet())
 		{
-			final String key = keys.next();
-			if (sourceTemplete.get(key).indexOf(block) > -1)
+			if (entry.getKey().indexOf(block) > -1)
 			{
-				sourceTemplete.get(key).replaceAll(block, targetValue.get(code).toString());
+				entry.getValue().replaceAll(block, targetValue.get(code).toString());
 				return true;
 			}
 		}
@@ -280,11 +265,9 @@ public class Templete
 			this.LoopTemplete.put(code, this.cutBlock(this.TempleteString, "LOOP", code));
 		}
 
-		final Iterator<String> keys = this.IfTemplete.keySet().iterator();
-		while (keys.hasNext())
+		for (Map.Entry<String, StrBuilder> entry : this.IfTemplete.entrySet())
 		{
-			final String key = keys.next();
-			final StrBuilder sb = this.IfTemplete.get(key);
+			final StrBuilder sb = entry.getValue();
 			startIndex = sb.length();
 			while (startIndex > -1)
 			{

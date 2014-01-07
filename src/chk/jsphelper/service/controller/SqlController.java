@@ -43,7 +43,7 @@ public class SqlController
 		finally
 		{
 			ConnectionPoolManager.getInstance().releaseConnection(sql.getDatasourceName(), conn, objectID, svs.isSuccess());
-			Constant.getLogger().debug("executeSql id:{} 마침 - {}", new String[] { objectID, DateUtil.getExecutedTime(stime) });
+			Constant.getLogger().debug("executeSql id:{} 마침 - {}", new Object[] { objectID, DateUtil.getExecutedTime(stime) });
 		}
 		return svs;
 	}
@@ -70,7 +70,7 @@ public class SqlController
 		}
 		finally
 		{
-			Constant.getLogger().debug("executeSql id:{} 마침 - {}", new String[] { objectID, DateUtil.getExecutedTime(stime) });
+			Constant.getLogger().debug("executeSql id:{} 마침 - {}", new Object[] { objectID, DateUtil.getExecutedTime(stime) });
 		}
 		return svs;
 	}
@@ -86,11 +86,11 @@ public class SqlController
 		{
 			if (outParameter == null)
 			{
-				dl = dm.createDataList(sql.getSrcenc(), sql.getTrgenc());
+				dl = dm.createDataList();
 			}
 			else
 			{
-				dl = dm.setOutParameter(outParameter, sql.getSrcenc(), sql.getTrgenc());
+				dl = dm.setOutParameter(outParameter);
 			}
 		}
 		m.put("DataList", dl);

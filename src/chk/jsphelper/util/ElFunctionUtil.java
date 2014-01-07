@@ -1,6 +1,6 @@
 package chk.jsphelper.util;
 
-public class ElFunctionUtil
+public final class ElFunctionUtil
 {
 	public static String oper3 (final boolean condition, final String trueValue, final String falseValue)
 	{

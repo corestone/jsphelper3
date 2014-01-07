@@ -1,5 +1,10 @@
 package chk.jsphelper.engine.ext.sql;
 
+import chk.jsphelper.Constant;
+import chk.jsphelper.module.wrapper.ConnWrapper;
+import chk.jsphelper.module.wrapper.MapStringsAdapter;
+import chk.jsphelper.object.sub.SqlBind;
+
 import java.io.StringReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,16 +12,11 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
-import chk.jsphelper.Constant;
-import chk.jsphelper.module.wrapper.ConnWrapper;
-import chk.jsphelper.module.wrapper.MapWrapper;
-import chk.jsphelper.object.sub.SqlBind;
-
 public class PreparedStatementManager extends StatementManager
 {
 	private PreparedStatement ps = null;
 
-	public PreparedStatementManager (final List<SqlBind> bindValue, final MapWrapper map)
+	public PreparedStatementManager (final List<SqlBind> bindValue, final MapStringsAdapter map)
 	{
 		super(bindValue, map);
 	}
@@ -65,7 +65,8 @@ public class PreparedStatementManager extends StatementManager
 	 * 프리페어드 세테이이트면트에 값을 바인드하는 메소드로 자동적으로 해당 페이지만 가지고 오는 페이지 관련 변수를 매핑한다.
 	 * 
 	 * @since 3.0
-	 * @param ps
+	 * @param conn
+	 * @param sql
 	 * @param pagingVar1
 	 * @param pagingVar2
 	 * @throws SQLException
@@ -76,7 +77,7 @@ public class PreparedStatementManager extends StatementManager
 		this.paramIndex = 0;
 		this.closeStatement(this.ps);
 		this.ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-		int i = 0;
+		int i;
 		for (i = 0; i < this.bindValue.size(); i++)
 		{
 			this.setBinderPS(i);

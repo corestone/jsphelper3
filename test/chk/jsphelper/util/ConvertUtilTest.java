@@ -1,44 +1,47 @@
 package chk.jsphelper.util;
 
 import static chk.jsphelper.util.ConvertUtil.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import chk.jsphelper.DataList;
-import chk.jsphelper.module.wrapper.DataListSource;
 
 public class ConvertUtilTest
 {
 	private DataList dl;
 
 	@Before
-	public void createDataList()
+	public void createDataList ()
 	{
-		DataListSource dls = new DataListSource();
-		for (int i = 0; i < 5; i++)
+		String[] keys = new String[5];
+		for (int i = 0; i < keys.length; i++)
 		{
-			dls.put("key" + i, new ArrayList<String>());
+			keys[i] = "field_" + Integer.toString(i + 1);
 		}
+		dl = new DataList(keys);
+
 		for (int i = 0; i < 10; i++)
 		{
+			Map<String, String> data = new HashMap<String, String>();
 			for (int j = 0; j < 5; j++)
 			{
-				dls.add("key" + j, "value_" + i + j);
+				data.put("field_" + Integer.toString(i + 1), "row:" + i + ",column:" + j);
 			}
+			dl.addData(data);
 		}
-		dl = new DataList(dls);
 	}
-	
+
 	@Test
 	public void testDataList2JSON ()
 	{
 		System.out.println(dl);
 		System.out.println(dataList2JSON(dl));
-		
+
 		assertTrue(true);
 	}
 
@@ -51,11 +54,11 @@ public class ConvertUtilTest
 	@Test
 	public void testDataList2Message ()
 	{
-//		dataList2Message(dl, new String[] {"key2","key3"});
-//		for (int i = 0; i < 10; i++)
-//		{
-//			System.out.println(ObjectFactory.getMessage("value_0" + i));
-//		}
+// dataList2Message(dl, new String[] {"key2","key3"});
+// for (int i = 0; i < 10; i++)
+// {
+// System.out.println(ObjectFactory.getMessage("value_0" + i));
+// }
 	}
 
 	@Test

@@ -1,14 +1,13 @@
 package chk.jsphelper.object;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import chk.jsphelper.object.enums.DataSourceVendor;
 import chk.jsphelper.object.enums.ObjectType;
 import chk.jsphelper.object.sub.DataSourceProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataSource implements ServiceObject
 {
@@ -156,9 +155,9 @@ public class DataSource implements ServiceObject
 	/**
 	 * @param idleSize
 	 */
-	public void setIdlesize (final int idlesize)
+	public void setIdlesize (final int idleSize)
 	{
-		this.idlesize = idlesize;
+		this.idlesize = idleSize;
 	}
 
 	/**
@@ -179,9 +178,9 @@ public class DataSource implements ServiceObject
 	/**
 	 * @param maxSize
 	 */
-	public void setMaxsize (final int maxsize)
+	public void setMaxsize (final int maxSize)
 	{
-		this.maxsize = maxsize;
+		this.maxsize = maxSize;
 	}
 
 	/**

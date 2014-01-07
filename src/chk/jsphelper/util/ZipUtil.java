@@ -1,17 +1,13 @@
 package chk.jsphelper.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.lang3.StringUtils;
-
-public class ZipUtil
+public final class ZipUtil
 {
 	private static final int BUFFER_SIZE = 1024 * 4;
 	private static final int COMPRESSION_LEVEL = 8;
@@ -23,8 +19,6 @@ public class ZipUtil
 	 *            - 압축 풀 Zip 파일
 	 * @param targetDir
 	 *            - 압축 푼 파일이 들어간 디렉토리
-	 * @param fileNameToLowerCase
-	 *            - 파일명을 소문자로 바꿀지 여부
 	 * @throws Exception
 	 */
 	public static void unzip (final File zipFile, final File targetDir) throws Exception
@@ -106,7 +100,7 @@ public class ZipUtil
 	 * 
 	 * @param zis
 	 *            - Zip Input Stream
-	 * @param filePath
+	 * @param targetFile
 	 *            - 압축 풀린 파일의 경로
 	 * @return
 	 * @throws Exception
@@ -118,7 +112,7 @@ public class ZipUtil
 		{
 			fos = new FileOutputStream(targetFile);
 			final byte[] buffer = new byte[ZipUtil.BUFFER_SIZE];
-			int len = 0;
+			int len;
 			while ((len = zis.read(buffer)) != -1)
 			{
 				fos.write(buffer, 0, len);
@@ -166,7 +160,7 @@ public class ZipUtil
 				zentry.setTime(sourceFile.lastModified());
 				zos.putNextEntry(zentry);
 				final byte[] buffer = new byte[ZipUtil.BUFFER_SIZE];
-				int cnt = 0;
+				int cnt;
 				while ((cnt = bis.read(buffer, 0, ZipUtil.BUFFER_SIZE)) != -1)
 				{
 					zos.write(buffer, 0, cnt);

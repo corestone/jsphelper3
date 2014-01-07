@@ -21,7 +21,7 @@ public class ByteUtilTest
 	@Test
 	public void testToBytes ()
 	{
-		assertArrayEquals(new byte[] {(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x10}, int2Bytes(16));
-		assertArrayEquals(new byte[] {(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x10}, long2Bytes(16));
+		assertArrayEquals(new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x10 }, int2Bytes(16));
+		assertArrayEquals(new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x10 }, long2Bytes(16));
 	}
 }

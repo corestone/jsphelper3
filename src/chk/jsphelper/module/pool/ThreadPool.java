@@ -1,14 +1,14 @@
 package chk.jsphelper.module.pool;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import chk.jsphelper.Constant;
 import chk.jsphelper.module.runnable.AbstractRunnable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class ThreadPool
 {
-	class WorkerThread extends Thread
+	private class WorkerThread extends Thread
 	{
 		public ThreadPool owner;
 
@@ -103,6 +103,13 @@ public class ThreadPool
 	@Override
 	protected void finalize ()
 	{
+		try
+		{
+			super.finalize();
+		}
+		catch (Throwable t)
+		{
+		}
 		this.reset();
 		for (final Thread element : this.threads)
 		{

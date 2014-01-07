@@ -24,7 +24,7 @@ package chk.jsphelper.util;
  * Author: Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland<br>
  * Multi-licensed: EPL / LGPL / GPL / AL / BSD / MIT.
  */
-public class Base64CoderUtil
+public final class Base64CoderUtil
 {
 	// Mapping table from 6-bit nibbles to Base64 characters.
 	private static final char[] map1 = new char[64];

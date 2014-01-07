@@ -1,16 +1,15 @@
 package chk.jsphelper.service.tag;
 
-import java.io.IOException;
-import java.util.Iterator;
+import chk.jsphelper.Constant;
+import chk.jsphelper.Parameter;
+import chk.jsphelper.util.HtmlUtil;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import chk.jsphelper.Constant;
-import chk.jsphelper.Parameter;
-import chk.jsphelper.util.HtmlUtil;
+import java.io.IOException;
+import java.util.Iterator;
 
 public class ParameterInput extends TagSupport
 {
@@ -36,18 +35,15 @@ public class ParameterInput extends TagSupport
 		{
 			final String[] currentIndexName = Constant.getValue("KeyName.CurrentIndex", "_currentIndex").split(",");
 
-			final Iterator<String> element = this.param.keySet().iterator();
-			while (element.hasNext())
+			for (String key : this.param.keySet())
 			{
-				final String key = element.next();
-
 				if (!"JSESSIONID".equals(key))
 				{
 					final String[] values = this.param.getValues(key);
 
 					for (int j = 0; j < values.length; j++)
 					{
-						sb.append("<input type=\"hidden\" id=\"" + key + (j == 0 ? "" : Integer.toString(j)) + "\" name=\"" + key + "\" value=\"" + values[j] + "\" />");
+						sb.append("<input type=\"hidden\" id=\"").append(key).append((j == 0 ? "" : Integer.toString(j))).append("\" name=\"").append(key).append("\" value=\"").append(values[j]).append("\" />");
 					}
 				}
 			}
@@ -60,7 +56,7 @@ public class ParameterInput extends TagSupport
 
 					for (int j = 0; j < values.length; j++)
 					{
-						sb.append("<input type=\"hidden\" id=\"" + key + (j == 0 ? "" : Integer.toString(j)) + "\" name=\"" + key + "\" value=\"" + values[j] + "\" />");
+						sb.append("<input type=\"hidden\" id=\"").append(key).append((j == 0 ? "" : Integer.toString(j))).append("\" name=\"").append(key).append("\" value=\"").append(values[j]).append("\" />");
 					}
 				}
 			}
@@ -75,12 +71,12 @@ public class ParameterInput extends TagSupport
 				{
 					for (int j = 0; j < values.length; j++)
 					{
-						sb.append("<input type=\"hidden\" id=\"" + key + (j == 0 ? "" : Integer.toString(j)) + "\" name=\"" + key + "\" value=\"" + HtmlUtil.encHTML(values[j]) + "\" />");
+						sb.append("<input type=\"hidden\" id=\"").append(key).append((j == 0 ? "" : Integer.toString(j))).append("\" name=\"").append(key).append("\" value=\"").append(HtmlUtil.encHTML(values[j])).append("\" />");
 					}
 				}
 				else
 				{
-					sb.append("<input type=\"hidden\" id=\"" + key + "\" name=\"" + key + "\" />");
+					sb.append("<input type=\"hidden\" id=\"").append(key).append("\" name=\"").append(key).append("\" />");
 				}
 			}
 		}

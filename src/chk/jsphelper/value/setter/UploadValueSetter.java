@@ -1,9 +1,10 @@
 package chk.jsphelper.value.setter;
 
+import chk.jsphelper.Constant;
+import chk.jsphelper.value.UploadValue;
+
 import java.util.List;
 import java.util.Map;
-
-import chk.jsphelper.value.UploadValue;
 
 public class UploadValueSetter extends UploadValue implements ValueSetter
 {
@@ -12,7 +13,7 @@ public class UploadValueSetter extends UploadValue implements ValueSetter
 		super(functionID);
 	}
 
-	public UploadValue getValue () throws CloneNotSupportedException
+	public UploadValue getValue ()
 	{
 		try
 		{
@@ -20,8 +21,9 @@ public class UploadValueSetter extends UploadValue implements ValueSetter
 		}
 		catch (final CloneNotSupportedException cnse)
 		{
-			throw cnse;
+			Constant.getLogger().error("UploadValueSetter.getValue에서 에러 발생 {}", new Object[] {cnse.getMessage()}, cnse);
 		}
+		return null;
 	}
 
 	public final void setSuccess (final boolean success)

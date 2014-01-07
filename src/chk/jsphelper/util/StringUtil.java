@@ -22,7 +22,7 @@ public final class StringUtil
 	/**
 	 * 문자열에서 2개 이상의 공백 문자을 하나의 공백문자로 만들어 내용을 압축하는 메소드이다.
 	 * 
-	 * @param str
+	 * @param sValue
 	 *            - 압축할 문자열
 	 * @return - 압축된 문자열
 	 */
@@ -138,7 +138,7 @@ public final class StringUtil
 	 * 문자열이 모두 몇줄로 이루어진 문자열인지를 알아내는 메소드이다.<br>
 	 * 개행문자의 갯수를 세어서 해당 문자의 줄 수를 체크해 낸다.
 	 * 
-	 * @param content
+	 * @param source
 	 *            몇줄짜리 문장인지 알려고 하는 문자열
 	 * @return 해당 문자 줄의 수
 	 */

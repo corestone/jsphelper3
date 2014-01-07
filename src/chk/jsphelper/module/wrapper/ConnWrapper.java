@@ -170,6 +170,7 @@ public class ConnWrapper implements Closeable
 		return this.conn.getAutoCommit();
 	}
 
+
 	/*
 	 * (non-Javadoc)
 	 * 

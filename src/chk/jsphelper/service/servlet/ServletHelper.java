@@ -92,13 +92,13 @@ public class ServletHelper extends HttpServlet
 			final StringBuilder sb = new StringBuilder();
 			sb.append("JSP/Servlet Error (Catched by ServletHepler) : [");
 			sb.append(customMsg);
-			sb.append("] Request URI : " + req.getRequestURI() + "?" + req.getQueryString());
+			sb.append("] Request URI : ").append(req.getRequestURI()).append("?").append(req.getQueryString());
 			final String user = req.getRemoteUser();
 			if (user != null)
 			{
-				sb.append(", User : " + user);
+				sb.append(", User : ").append(user);
 			}
-			sb.append(", User Location : " + req.getRemoteHost() + "(" + req.getRemoteAddr() + ")");
+			sb.append(", User Location : ").append(req.getRemoteHost()).append("(").append(req.getRemoteAddr()).append(")");
 
 			final PrintWriter out = res.getWriter();
 			res.setContentType("text/html;charset=UTF-8");

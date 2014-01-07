@@ -1,9 +1,10 @@
 package chk.jsphelper.value.setter;
 
-import java.util.Map;
-
+import chk.jsphelper.Constant;
 import chk.jsphelper.DataList;
 import chk.jsphelper.value.ExcelValue;
+
+import java.util.Map;
 
 public class ExcelValueSetter extends ExcelValue implements ValueSetter
 {
@@ -12,7 +13,7 @@ public class ExcelValueSetter extends ExcelValue implements ValueSetter
 		super(functionID);
 	}
 
-	public ExcelValue getValue () throws CloneNotSupportedException
+	public ExcelValue getValue ()
 	{
 		try
 		{
@@ -20,8 +21,9 @@ public class ExcelValueSetter extends ExcelValue implements ValueSetter
 		}
 		catch (final CloneNotSupportedException cnse)
 		{
-			throw cnse;
+			Constant.getLogger().error("ExcelValueSetter.getValue에서 에러 발생 {}", new Object[] {cnse.getMessage()}, cnse);
 		}
+		return null;
 	}
 
 	public final void setSuccess (final boolean success)

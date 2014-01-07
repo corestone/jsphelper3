@@ -1,7 +1,8 @@
 package chk.jsphelper.util;
 
-import static org.junit.Assert.*;
-import static chk.jsphelper.util.FileUtil.*;
+import static chk.jsphelper.util.FileUtil.path2FileName;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 

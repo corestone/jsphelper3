@@ -75,7 +75,7 @@ public class DownloadServlet extends HttpServlet
 				res.reset();
 				res.setContentType("application/octet-stream");
 				res.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(saveName, "UTF-8"));
-				res.setHeader("Content-Length", String.valueOf(file.length()) + ";");
+				res.setHeader("Content-Length", file.length() + ";");
 				res.setHeader("Pragma", "no-cache;");
 				res.setHeader("Expires", "-1;");
 				bin = new BufferedInputStream(new FileInputStream(file));

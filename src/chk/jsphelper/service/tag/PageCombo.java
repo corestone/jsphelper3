@@ -1,14 +1,13 @@
 package chk.jsphelper.service.tag;
 
-import java.io.IOException;
+import chk.jsphelper.Constant;
+import chk.jsphelper.Parameter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import chk.jsphelper.Constant;
-import chk.jsphelper.Parameter;
+import java.io.IOException;
 
 public class PageCombo extends TagSupport
 {
@@ -31,17 +30,17 @@ public class PageCombo extends TagSupport
 
 		if (this.total > 0)
 		{
-			sb.append("<select id=\"" + indexCurrentParam + "\" name=\"" + indexCurrentParam + "\" onchange=\"_goPage('" + this.configIndex + "');\">");
-			sb.append("<option value=\"\">" + this.title + "</option>");
+			sb.append("<select id=\"").append(indexCurrentParam).append("\" name=\"").append(indexCurrentParam).append("\" onchange=\"_goPage('").append(this.configIndex).append("');\">");
+			sb.append("<option value=\"\">").append(this.title).append("</option>");
 			for (int i = 0; i < this.total; i++)
 			{
 				if (i == (index - 1))
 				{
-					sb.append("<option value=\"" + (i + 1) + "\" selected=\"selected\">" + (i + 1) + "</option>");
+					sb.append("<option value=\"").append((i + 1)).append("\" selected=\"selected\">").append((i + 1)).append("</option>");
 				}
 				else
 				{
-					sb.append("<option value=\"" + (i + 1) + "\">" + (i + 1) + "</option>");
+					sb.append("<option value=\"").append((i + 1)).append("\">").append((i + 1)).append("</option>");
 				}
 			}
 			sb.append("</select>");

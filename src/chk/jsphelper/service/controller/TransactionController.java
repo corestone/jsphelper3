@@ -1,9 +1,5 @@
 package chk.jsphelper.service.controller;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import chk.jsphelper.Constant;
 import chk.jsphelper.DataList;
 import chk.jsphelper.ObjectFactory;
@@ -19,6 +15,10 @@ import chk.jsphelper.util.DateUtil;
 import chk.jsphelper.util.StringUtil;
 import chk.jsphelper.value.TransactionValue;
 import chk.jsphelper.value.setter.TransactionValueSetter;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class TransactionController
 {
@@ -71,13 +71,11 @@ public class TransactionController
 		}
 		finally
 		{
-			final Iterator<String> elements = conns.keySet().iterator();
-			while (elements.hasNext())
+			for (Map.Entry<String, ConnWrapper> entry : conns.entrySet())
 			{
-				connKey = elements.next();
-				ConnectionPoolManager.getInstance().releaseConnection(connKey, conns.get(connKey), objectID, tvs.isSuccess());
+				ConnectionPoolManager.getInstance().releaseConnection(entry.getKey(), entry.getValue(), objectID, tvs.isSuccess());
 			}
-			Constant.getLogger().debug("executeJdbc id:{} 마침 - {}", new String[] { objectID, DateUtil.getExecutedTime(stime) });
+			Constant.getLogger().debug("executeJdbc id:{} 마침 - {}", new Object[] { objectID, DateUtil.getExecutedTime(stime) });
 		}
 		return tvs;
 	}
@@ -120,7 +118,7 @@ public class TransactionController
 		}
 		finally
 		{
-			Constant.getLogger().debug("executeJdbc id:{} 마침 - {}", new String[] { objectID, DateUtil.getExecutedTime(stime) });
+			Constant.getLogger().debug("executeJdbc id:{} 마침 - {}", new Object[] { objectID, DateUtil.getExecutedTime(stime) });
 		}
 		return tvs;
 	}
@@ -137,11 +135,11 @@ public class TransactionController
 		{
 			if (outParameter == null)
 			{
-				this.dl[index] = dm.createDataList(srcEnc, trgEnc);
+				this.dl[index] = dm.createDataList();
 			}
 			else
 			{
-				this.dl[index] = dm.setOutParameter(outParameter, srcEnc, trgEnc);
+				this.dl[index] = dm.setOutParameter(outParameter);
 			}
 			dm.setReturnParam(transaction.getReturnKeys(index), transaction.getReturnFields(index), param, this.dl[index]);
 		}

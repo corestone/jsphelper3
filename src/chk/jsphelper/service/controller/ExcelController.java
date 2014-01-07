@@ -33,7 +33,7 @@ public class ExcelController
 		}
 		finally
 		{
-			Constant.getLogger().debug("executeExcel id:{} 마침 - {}", new String[] { objectID, DateUtil.getExecutedTime(stime) });
+			Constant.getLogger().debug("executeExcel id:{} 마침 - {}", new Object[] { objectID, DateUtil.getExecutedTime(stime) });
 		}
 		return (ExcelValue) evs;
 	}

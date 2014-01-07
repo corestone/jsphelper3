@@ -1,10 +1,9 @@
 package chk.jsphelper.util;
 
-import static org.junit.Assert.*;
-
 import static chk.jsphelper.util.ColorUtil.*;
+import static org.junit.Assert.assertEquals;
 
-import java.awt.Color;
+import java.awt.*;
 
 import org.junit.Test;
 
@@ -12,13 +11,13 @@ public class ColorUtilTest
 {
 
 	@Test
-		public void testColor2Web ()
-		{
-			assertEquals("#ffffffff", color2Web(new Color(255,255,255)));
-		}
+	public void testColor2Web ()
+	{
+		assertEquals("#ffffffff", color2Web(new Color(255, 255, 255)));
+	}
 
 	@Test
-	public void testMoreColor()
+	public void testMoreColor ()
 	{
 		assertEquals("#333333", moreColor("#666", MODE.DARK));
 		assertEquals("#999999", moreColor("#333", MODE.LIGHT));
@@ -27,6 +26,6 @@ public class ColorUtilTest
 	@Test
 	public void testWeb2Color ()
 	{
-		assertEquals(new Color(255,255,255), web2Color("#ffffffff"));
+		assertEquals(new Color(255, 255, 255), web2Color("#ffffffff"));
 	}
 }

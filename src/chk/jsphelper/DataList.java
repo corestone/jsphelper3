@@ -1,15 +1,11 @@
 package chk.jsphelper;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.commons.lang3.ArrayUtils;
-
-import chk.jsphelper.module.wrapper.DataListSource;
+import chk.jsphelper.module.wrapper.MapListAdapter;
 import chk.jsphelper.util.DateUtil;
 import chk.jsphelper.util.StringUtil;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.*;
 
 /**
  * 이 클래스는 Java의 ResultSet을 대신하는 클래스로써 SqlValue, TransactionValue에서 불러올 수 있다.
@@ -20,13 +16,13 @@ import chk.jsphelper.util.StringUtil;
  * @see chk.jsphelper.value.SqlValue
  * @see chk.jsphelper.value.TransactionValue
  */
-public class DataList extends DataListSource
+public class DataList extends MapListAdapter
 {
 	private int currentRow = -1;
 	private int rowSize = 0;
 
 	/**
-	 * @param fieldSize
+	 * @param fields
 	 */
 	public DataList (final String[] fields)
 	{
@@ -56,13 +52,12 @@ public class DataList extends DataListSource
 
 	public void addData (final Map<String, String> data)
 	{
-		final Iterator<String> keys = this.m.keySet().iterator();
-		while (keys.hasNext())
+		for (String key : this.m.keySet())
 		{
-			final String key = keys.next();
 			this.m.get(key).add(StringUtil.trim(data.get(key)));
 		}
 		this.rowSize++;
+		setRows();
 	}
 
 	/**
@@ -216,14 +211,12 @@ public class DataList extends DataListSource
 	 */
 	public String getFieldName (final int index)
 	{
-		final Iterator<String> keys = this.m.keySet().iterator();
 		int i = 1;
-		while (keys.hasNext())
+		for (Map.Entry<String, List<String>> entry : this.m.entrySet())
 		{
-			final String key = keys.next();
 			if (i == index)
 			{
-				return key;
+				return entry.getKey();
 			}
 			i++;
 		}
@@ -413,5 +406,16 @@ public class DataList extends DataListSource
 	public int size ()
 	{
 		return this.rowSize;
+	}
+
+	private void setRows()
+	{
+		for (Map.Entry<String, List<String>> entry : this.m.entrySet())
+		{
+			for (int i = entry.getValue().size(); i < this.rowSize; i++)
+			{
+				entry.getValue().add("");
+			}
+		}
 	}
 }

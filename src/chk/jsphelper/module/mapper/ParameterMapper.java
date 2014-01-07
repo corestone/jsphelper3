@@ -1,15 +1,14 @@
 package chk.jsphelper.module.mapper;
 
-import java.util.Iterator;
-import java.util.List;
-
+import chk.jsphelper.Constant;
+import chk.jsphelper.module.wrapper.MapStringsAdapter;
+import chk.jsphelper.object.enums.SqlBindDir;
+import chk.jsphelper.object.sub.SqlBind;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import chk.jsphelper.Constant;
-import chk.jsphelper.module.wrapper.MapWrapper;
-import chk.jsphelper.object.enums.SqlBindDir;
-import chk.jsphelper.object.sub.SqlBind;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Corestone H. Kang
@@ -18,18 +17,19 @@ public class ParameterMapper
 {
 	private static final String CLOSE_TAG = "}";
 	private static final String OPEN_TAG = "${";
-	private final MapWrapper map;
+	private final MapStringsAdapter map;
 	private int mappingSize = 1;
+	private String errorKey;
 
 	/**
-	 * @param param
+	 * @param map
 	 */
-	public ParameterMapper (final MapWrapper map)
+	public ParameterMapper (final MapStringsAdapter map)
 	{
 		if (map == null)
 		{
 			Constant.getLogger().error("파라미터가 null이라서 파라미터 매퍼를 생성할 때 문제가 발생합니다.");
-			this.map = new MapWrapper();
+			this.map = new MapStringsAdapter();
 		}
 		else
 		{
@@ -45,23 +45,10 @@ public class ParameterMapper
 	 */
 	public void checkParam () throws Exception
 	{
-		int max = 1;
-		final Iterator<String> element = this.map.keySet().iterator();
-		while (element.hasNext())
+		int max = getParamSize(this.map);
+		if (max == -1)
 		{
-			final String key = element.next();
-			final String[] values = this.map.get(key);
-			if (values.length > max)
-			{
-				if ((max > 1) && (values.length != max))
-				{
-					throw new Exception("[" + key + "] 파라미터의 값 배열의 크기가 다른 파라미터의 배열크기와 다릅니다.");
-				}
-				else
-				{
-					max = values.length;
-				}
-			}
+			throw new Exception("[" + errorKey + "] 파라미터의 값 배열의 크기가 다른 파라미터의 배열크기와 다릅니다.");
 		}
 		this.mappingSize = max;
 		Constant.getLogger().debug("매핑된 파라미터의 배열 크기는 {}입니다.", this.mappingSize);
@@ -83,21 +70,15 @@ public class ParameterMapper
 
 		for (final String key : queryBinds)
 		{
-			final String[] values = this.map.get(key);
-			if (values == null)
+			int calcMax = calcParamSize(this.map, key, max);
+			switch (calcMax)
 			{
-				throw new Exception("Query에 바인드할 " + key + "변수가 파라미터에 입력되지 않았습니다.");
-			}
-			if (values.length > max)
-			{
-				if ((max > 1) && (values.length != max))
-				{
+				case 0:
+					throw new Exception("Query에 바인드할 " + key + "변수가 파라미터에 입력되지 않았습니다.");
+				case -1:
 					throw new Exception("[" + key + "] 파라미터의 값 배열의 크기가 다른 파라미터의 배열크기와 다릅니다.");
-				}
-				else
-				{
-					max = values.length;
-				}
+				default:
+					max = calcMax;
 			}
 		}
 
@@ -105,21 +86,15 @@ public class ParameterMapper
 		{
 			if (SqlBindDir.IN.equals(sb.getDirEnum()) || SqlBindDir.INOUT.equals(sb.getDirEnum()))
 			{
-				final String[] s = this.map.get(sb.getValue());
-				if (s == null)
+				int calcMax = calcParamSize(this.map, sb.getValue(), max);
+				switch (calcMax)
 				{
-					throw new Exception("Query에 바인드할 " + sb.getValue() + "변수가 파라미터에 입력되지 않았습니다.");
-				}
-				if (s.length > max)
-				{
-					if ((max > 1) && (s.length != max))
-					{
+					case 0:
+						throw new Exception("Query에 바인드할 " + sb.getValue() + "변수가 파라미터에 입력되지 않았습니다.");
+					case -1:
 						throw new Exception("[" + sb.getValue() + "] 파라미터의 값 배열의 크기가 다른 파라미터의 배열크기와 다릅니다.");
-					}
-					else
-					{
-						max = s.length;
-					}
+					default:
+						max = calcMax;
 				}
 			}
 		}
@@ -134,7 +109,7 @@ public class ParameterMapper
 	public String convertMappingText (final String text)
 	{
 		final String[] map = this.getTagInText(text);
-		String rtnText = text.toString();
+		String rtnText = text;
 
 		for (final String key : map)
 		{
@@ -149,7 +124,7 @@ public class ParameterMapper
 
 	/**
 	 * @param text
-	 * @return - 문자열에서 Parameter의 값으로 치환할 문자열이 배열로 되어 있을 때 해당 배일로 치환한 결과 문자열 배열
+	 * @return - 문자열에서 Parameter의 값으로 치환할 문자열이 배열로 되어 있을 때 해당 배열로 치환한 결과 문자열 배열
 	 */
 	public String[] convertMappingTexts (final String text)
 	{
@@ -180,24 +155,15 @@ public class ParameterMapper
 				}
 			}
 		}
-		// 만약 매핑된 값이 전부 다 같다면 크기 1의 배열로 다시 압축한다.
+		// 만약 매핑된 값이 전부 다 같다면 크기 1의 배열로 반환한다
 		for (int i = 1; i < rtnText.length; i++)
 		{
 			if (!rtnText[i - 1].equals(rtnText[i]))
 			{
-				isEquals = false;
-				break;
+				return rtnText;
 			}
 		}
-		if (isEquals)
-		{
-			final String[] rtnSingleText = { rtnText[0] };
-			return rtnSingleText;
-		}
-		else
-		{
-			return rtnText;
-		}
+		return new String[] { rtnText[0] };
 	}
 
 	/**
@@ -218,5 +184,40 @@ public class ParameterMapper
 	{
 		final String[] s = StringUtils.substringsBetween(str, ParameterMapper.OPEN_TAG, ParameterMapper.CLOSE_TAG);
 		return (s == null) ? ArrayUtils.EMPTY_STRING_ARRAY : s;
+	}
+
+	private int getParamSize(Map<String, String[]> map)
+	{
+		int max = 1;
+		for (String key : map.keySet())
+		{
+			int calcMax = calcParamSize(map, key, max);
+			if (calcMax < 1)
+			{
+				return calcMax;
+			}
+			max = calcMax;
+		}
+		return max;
+	}
+
+	private int calcParamSize(Map<String, String[]> map, String key, int max)
+	{
+		final String[] values = map.get(key);
+		if (values == null)
+		{
+			this.errorKey = key;
+			return 0;
+		}
+		else if (values.length != max && max == 1)
+		{
+			max = values.length;
+		}
+		else
+		{
+			this.errorKey = key;
+			return -1;
+		}
+		return max;
 	}
 }

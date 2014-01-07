@@ -1,19 +1,19 @@
 package chk.jsphelper.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 그리니치 첨문대 기준으로 나올 때에는 자바옵션에 -Duser.timezone=Asia/Seoul 를 추가해 주면 된다.
  * 
  * @author Corestone
  */
-public class DateUtil
+public final class DateUtil
 {
 	private static final Calendar calendar = Calendar.getInstance();
 	private static final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

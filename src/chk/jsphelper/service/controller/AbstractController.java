@@ -14,12 +14,12 @@ public abstract class AbstractController
 
 	protected void afterExecute ()
 	{
-		Constant.getLogger().debug("execute{} id:{} 마침 - {}", new String[] { this.type.getSymbol(), this.objectID, DateUtil.getExecutedTime(this.startTime) });
+		Constant.getLogger().debug("execute{} id:{} 마침 - {}", new Object[] { this.type.getSymbol(), this.objectID, DateUtil.getExecutedTime(this.startTime) });
 	}
 
 	protected void beforeExecute ()
 	{
 		this.startTime = System.nanoTime();
-		Constant.getLogger().debug("execute{} id:{} 시작", new String[] { this.type.getSymbol(), this.objectID });
+		Constant.getLogger().debug("execute{} id:{} 시작", new Object[] { this.type.getSymbol(), this.objectID });
 	}
 }

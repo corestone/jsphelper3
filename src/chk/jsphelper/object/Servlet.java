@@ -84,25 +84,25 @@ public class Servlet implements ServiceObject
 	/**
 	 * @param runAfter
 	 */
-	public void setAfter (final boolean After)
+	public void setAfter (final boolean runAfter)
 	{
-		this.after = After;
+		this.after = runAfter;
 	}
 
 	/**
 	 * @param runBefore
 	 */
-	public void setBefore (final boolean before)
+	public void setBefore (final boolean runBefore)
 	{
-		this.before = before;
+		this.before = runBefore;
 	}
 
 	/**
 	 * @param targetClass
 	 */
-	public void setClassname (final String classname)
+	public void setClassname (final String targetClass)
 	{
-		this.classname = classname;
+		this.classname = targetClass;
 	}
 
 	public void setDescription (final String description)
@@ -126,9 +126,9 @@ public class Servlet implements ServiceObject
 	/**
 	 * @param uploadID
 	 */
-	public void setUpload (final String upload)
+	public void setUpload (final String uploadID)
 	{
-		this.upload = upload;
+		this.upload = uploadID;
 	}
 
 	@Override

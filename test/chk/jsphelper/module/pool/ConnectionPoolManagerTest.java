@@ -1,17 +1,22 @@
 package chk.jsphelper.module.pool;
 
-import static org.junit.Assert.*;
+/**
+ * Created with IntelliJ IDEA.
+ * User: Corestone
+ * Date: 13. 7. 17
+ * Time: 오후 2:03
+ * To change this template use File | Settings | File Templates.
+ */
 
-import java.sql.Connection;
-
+import chk.jsphelper.ObjectLoader;
+import chk.jsphelper.module.wrapper.ConnWrapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import chk.jsphelper.ObjectLoader;
+import static org.junit.Assert.assertEquals;
 
 public class ConnectionPoolManagerTest
 {
-
 	@Before
 	public void setUp () throws Exception
 	{
@@ -21,12 +26,12 @@ public class ConnectionPoolManagerTest
 	@Test
 	public void testConnectionPoolManager ()
 	{
-		int connSize = 0;
+		int connSize;
 		ConnectionPoolManager cpm = ConnectionPoolManager.getInstance();
 		try
 		{
 			connSize = cpm.size("db");
-			Connection conn = cpm.getConnection("db", "Test");
+			ConnWrapper conn = cpm.getConnection("db", "Test");
 			assertEquals(cpm.size("db"), connSize - 1);
 			cpm.releaseConnection("db", conn, "Test", true);
 			assertEquals(cpm.size("db"), connSize);

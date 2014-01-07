@@ -1,7 +1,7 @@
 package chk.jsphelper.util;
 
-import static org.junit.Assert.*;
 import static chk.jsphelper.util.HtmlUtil.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class HtmlUtilTest
 	}
 
 	@Test
-	public void testEncHTML()
+	public void testEncHTML ()
 	{
 		assertEquals("test<br/>love", encHTML("test\nlove"));
 		assertEquals("test.jsp?id=test&amp;pw=test", encHTML("test.jsp?id=test&pw=test"));
@@ -24,7 +24,7 @@ public class HtmlUtilTest
 	}
 
 	@Test
-	public void testRemoveTag()
+	public void testRemoveTag ()
 	{
 		assertEquals("타이틀", removeTag("<title>타이틀</title>"));
 		assertEquals("입니다", removeTag("입니다<br /><script type=\"text/javascript\">alert('chk');</script>"));

@@ -1,5 +1,10 @@
 package chk.jsphelper;
 
+import chk.jsphelper.object.*;
+import chk.jsphelper.object.enums.ObjectType;
+import chk.jsphelper.object.sub.*;
+import org.apache.commons.digester3.Digester;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,27 +13,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.commons.digester3.Digester;
-
-import chk.jsphelper.object.DataSource;
-import chk.jsphelper.object.Excel;
-import chk.jsphelper.object.Mail;
-import chk.jsphelper.object.Servlet;
-import chk.jsphelper.object.Sql;
-import chk.jsphelper.object.Transaction;
-import chk.jsphelper.object.Upload;
-import chk.jsphelper.object.enums.ObjectType;
-import chk.jsphelper.object.sub.DataSourceProperty;
-import chk.jsphelper.object.sub.ExcelColtype;
-import chk.jsphelper.object.sub.MailContent;
-import chk.jsphelper.object.sub.MailFrom;
-import chk.jsphelper.object.sub.MailTo;
-import chk.jsphelper.object.sub.SqlBind;
-import chk.jsphelper.object.sub.SqlClob;
-import chk.jsphelper.object.sub.TransactionSqls;
-import chk.jsphelper.object.sub.TransactionSqlsParam;
-import chk.jsphelper.object.sub.TransactionSqlsReturn;
 
 /**
  * @author Corestone H. Kang
@@ -151,8 +135,6 @@ public class ObjectLoader
 	/**
 	 * 엑셀 매핑 작업을 하는 메소드이다.
 	 * 
-	 * @param reset
-	 *            - 기존 데이타에 엎어 쓸 지 여부
 	 * @return 매핑 성공 여부
 	 */
 	private static boolean mappingExcel ()
@@ -172,8 +154,6 @@ public class ObjectLoader
 	/**
 	 * 메일 매핑 작업을 하는 메소드이다.
 	 * 
-	 * @param reset
-	 *            - 기존 데이타에 엎어 쓸 지 여부
 	 * @return 매핑 성공 여부
 	 */
 	private static boolean mappingMail ()
@@ -200,8 +180,6 @@ public class ObjectLoader
 	/**
 	 * 서블릿 매핑 작업을 하는 메소드이다.
 	 * 
-	 * @param reset
-	 *            - 기존 데이타에 엎어 쓸 지 여부
 	 * @return 매핑 성공 여부
 	 */
 	private static boolean mappingServlet ()
@@ -218,8 +196,6 @@ public class ObjectLoader
 	/**
 	 * 쿼리 매핑 작업을 하는 메소드이다.
 	 * 
-	 * @param reset
-	 *            - 기존 데이타에 엎어 쓸 지 여부
 	 * @return 매핑 성공 여부
 	 */
 	private static boolean mappingSql ()
@@ -243,8 +219,6 @@ public class ObjectLoader
 	/**
 	 * 쿼리트랜젝션 매핑 작업을 하는 메소드이다.
 	 * 
-	 * @param reset
-	 *            - 기존 데이타에 엎어 쓸 지 여부
 	 * @return 매핑 성공 여부
 	 */
 	private static boolean mappingTransaction ()
@@ -270,8 +244,6 @@ public class ObjectLoader
 	/**
 	 * 업로드 매핑 작업을 하는 메소드이다.
 	 * 
-	 * @param reset
-	 *            - 기존 데이타에 엎어 쓸 지 여부
 	 * @return 매핑 성공 여부
 	 */
 	private static boolean mappingUpload ()

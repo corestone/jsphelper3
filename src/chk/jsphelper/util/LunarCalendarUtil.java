@@ -2,7 +2,7 @@ package chk.jsphelper.util;
 
 import java.text.NumberFormat;
 
-public class LunarCalendarUtil
+public final class LunarCalendarUtil
 {
 	private final static int DayOfMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }; // 양력 월별 일수
 	// 1 : 작(29일), 2 : 큰(30일), 3 : 작작(윤달 - 29일,29일), 4 : 작큰(윤달 - 29일,30일), 5 : 큰작(윤달 - 30일,29일), 6 : 큰큰(윤달 - 30일,30일)
@@ -173,7 +173,13 @@ public class LunarCalendarUtil
 	{ 1, 2, 2, 1, 2, 2, 1, 2, 1, 1, 1, 1, 353 }, // 2000년
 	{ 2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 355 }, // 2000년
 	{ 2, 1, 4, 1, 2, 1, 2, 2, 1, 2, 2, 1, 384 } }; // 2000년
+
 	private final static int LunarDataNumberDay[] = { 29, 30, 58, 59, 59, 60 }; // 인덱스 숫자의 합
+
+	private LunarCalendarUtil()
+	{
+
+	}
 
 	/**
 	 * 해당 연도가 윤년인지 여부를 체크한다.
@@ -197,43 +203,36 @@ public class LunarCalendarUtil
 	/**
 	 * 음력을 양력으로 변환하는 메소드이다.
 	 * 
-	 * @param TranseDay
-	 * @param leapyes
-	 * @return
+	 * @param TranseDay - 음력날짜
+	 * @param leapyes - 윤달 여부
+	 * @return - 변환된 양력일자
 	 */
 	public static String lunar2Solar (final String TranseDay, final boolean leapyes)
 	{
-		String sValue = "";
-
 		final int lyear = Integer.parseInt(TranseDay.substring(0, 4));
 		final int lmonth = Integer.parseInt(TranseDay.substring(4, 6));
 		final int lday = Integer.parseInt(TranseDay.substring(6, 8));
 
 		final long coutnAllDay = LunarCalendarUtil.countLunarDay(lyear, lmonth, lday, leapyes);
 
-		sValue = LunarCalendarUtil.countToDateForSolar(coutnAllDay);
-		return sValue;
+		return LunarCalendarUtil.countToDateForSolar(coutnAllDay);
 	}
 
 	/**
 	 * 양력을 음력으로 변환하는 메소드이다.
 	 * 
-	 * @param TranseDay
-	 * @return
+	 * @param TranseDay - 양력 일자
+	 * @return - 변환된 음력일자
 	 */
 	public static String solar2Lunar (final String TranseDay)
 	{
-		String sValue = "";
-
 		final int lyear = Integer.parseInt(TranseDay.substring(0, 4));
 		final int lmonth = Integer.parseInt(TranseDay.substring(4, 6));
 		final int lday = Integer.parseInt(TranseDay.substring(6, 8));
 
 		final long coutnAllDay = LunarCalendarUtil.countSolarDay(lyear, lmonth, lday);
 
-		sValue = LunarCalendarUtil.countToDateForLunar(coutnAllDay);
-
-		return sValue;
+		return LunarCalendarUtil.countToDateForLunar(coutnAllDay);
 	}
 
 	/**
@@ -252,8 +251,8 @@ public class LunarCalendarUtil
 	private static long countLunarDay (int Year, final int Month, final int Day, final boolean Leap)
 	{
 		long AllCount = 0;
-		long ResultValue = 0;
-		int i = 0;
+		long ResultValue;
+		int i;
 		Year -= 1900;
 		AllCount += LunarCalendarUtil.countSolarDay(1900, 1, 30);
 
@@ -309,7 +308,7 @@ public class LunarCalendarUtil
 	 */
 	private static long countSolarDay (final int Year, final int Month, final int Day)
 	{
-		int i, j = 0;
+		int i, j;
 		long AllCount = 366;
 		for (i = 1; i <= (Year - 1); i++)
 		{
@@ -347,19 +346,17 @@ public class LunarCalendarUtil
 	/**
 	 * 총날짜를 가지고 가지고 음력 날짜을 변환해서 반환한다.
 	 * 
-	 * @param AllCountDay
-	 * @return
+	 * @param AllCountDay - 총일자
+	 * @return - 변환된 음력일자
 	 */
 	private static String countToDateForLunar (final long AllCountDay)
 	{
-		long AllCount = 0;
-		int Year, Month, Day = 0;
-		// {LDNC : Lunar Data Number Count}
+		long AllCount;
 		boolean RepeatStop;
 
-		Year = 0;
-		Month = 1;
-		Day = 0;
+		int Year = 0;
+		int Month = 1;
+		int Day = 0;
 		RepeatStop = false;
 
 		AllCount = AllCountDay;
@@ -417,24 +414,22 @@ public class LunarCalendarUtil
 		final NumberFormat nf = NumberFormat.getNumberInstance();
 		nf.setMinimumIntegerDigits(2);
 
-		final String returnLunar = Long.toString(Year + 1900) + nf.format(Integer.parseInt(Long.toString(Month))) + nf.format(Integer.parseInt(Long.toString(Day)));
-		return returnLunar;
+		return Long.toString(Year + 1900) + nf.format(Integer.parseInt(Long.toString(Month))) + nf.format(Integer.parseInt(Long.toString(Day)));
 	}
 
 	/**
 	 * 총날짜를 가지고 가지고 양력 날짜을 변환해서 반환한다.
 	 * 
-	 * @param AllCountDay
-	 * @return
+	 * @param AllCountDay - 총일자
+	 * @return - 변환된 양력 일자
 	 */
 	private static String countToDateForSolar (long AllCountDay)
 	{
-		int Year, Month = 0;
 		boolean YearRepeatStop, MonthRepeatStop;
 		YearRepeatStop = false;
 		MonthRepeatStop = false;
-		Year = 0;
-		Month = 1;
+		int Year = 0;
+		int Month = 1;
 		do
 		{
 			if (LunarCalendarUtil.checkYunYear(Year))
@@ -511,7 +506,6 @@ public class LunarCalendarUtil
 		final NumberFormat nf = NumberFormat.getNumberInstance();
 		nf.setMinimumIntegerDigits(2);
 
-		final String returnLunar = Long.toString(Year) + nf.format(Integer.parseInt(Long.toString(Month))) + nf.format(Integer.parseInt(Long.toString(AllCountDay)));
-		return returnLunar;
+		return Long.toString(Year) + nf.format(Integer.parseInt(Long.toString(Month))) + nf.format(Integer.parseInt(Long.toString(AllCountDay)));
 	}
 }

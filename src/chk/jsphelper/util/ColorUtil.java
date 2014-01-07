@@ -1,13 +1,19 @@
 package chk.jsphelper.util;
 
 import java.awt.Color;
+import java.util.Random;
 
-public class ColorUtil
+public final class ColorUtil
 {
 	public enum MODE
 	{
 		DARK, LIGHT
-	};
+	}
+
+	private ColorUtil()
+	{
+
+	}
 
 	/**
 	 * 컬러 클래스를 가지고 웹칼라 방식의 문자열을 생성한다. 단 #ffcc99ff 방식의 Hex방식만 지원한다.
@@ -33,9 +39,10 @@ public class ColorUtil
 	 */
 	public static String getRandomColor ()
 	{
-		final String rCo = Integer.toHexString((int) (Math.random() * 256));
-		final String gCo = Integer.toHexString((int) (Math.random() * 256));
-		final String bCo = Integer.toHexString((int) (Math.random() * 256));
+		Random r = new Random();
+		final String rCo =  Integer.toHexString (r.nextInt (255));
+		final String gCo = Integer.toHexString(r.nextInt(255));
+		final String bCo = Integer.toHexString(r.nextInt(255));
 
 		return "#" + rCo + gCo + bCo;
 	}
@@ -82,9 +89,9 @@ public class ColorUtil
 	 *            - # + Hex방식의 칼라코드값
 	 * @return 칼라 오브젝트
 	 */
-	public static Color web2Color (final String color)
+	public static Color web2Color (final String webcolor)
 	{
-		final int[] colorCode = ColorUtil.convertColorCode(color);
+		final int[] colorCode = ColorUtil.convertColorCode(webcolor);
 		return new Color(colorCode[0], colorCode[1], colorCode[2], colorCode[3]);
 	}
 

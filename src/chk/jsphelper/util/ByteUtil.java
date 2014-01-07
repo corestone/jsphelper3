@@ -110,7 +110,7 @@ public final class ByteUtil
 			return null;
 		}
 
-		final StringBuffer result = new StringBuffer();
+		final StringBuilder result = new StringBuilder();
 		for (final byte b : bytes)
 		{
 			result.append(Integer.toString((b & 0xF0) >> 4, 16));

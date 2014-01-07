@@ -1,14 +1,13 @@
 package chk.jsphelper.util;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import chk.jsphelper.Constant;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
@@ -19,13 +18,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Scanner;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageOutputStream;
-
-import chk.jsphelper.Constant;
-
-public class FileUtil
+public final class FileUtil
 {
 	public static final int KB = 1024;
 	public static final int MB = FileUtil.KB * FileUtil.KB;
@@ -137,18 +130,7 @@ public class FileUtil
 		{
 			return true;
 		}
-		try
-		{
-			if (!dir.exists())
-			{
-				dir.mkdirs();
-			}
-		}
-		catch (final Exception e)
-		{
-			return false;
-		}
-		return true;
+		return dir.mkdir();
 	}
 
 	/**
@@ -276,10 +258,7 @@ public class FileUtil
 	public static void deleteFile (final String filePath)
 	{
 		final File f = new File(filePath);
-		if (f.exists())
-		{
-			f.delete();
-		}
+		f.delete();
 	}
 
 	/**
@@ -291,7 +270,7 @@ public class FileUtil
 	 */
 	public static String getExtension (final String filename)
 	{
-		final int extIndex = filename.lastIndexOf(".");
+		final int extIndex = filename.lastIndexOf('.');
 		String extName = "";
 		if (extIndex > 0)
 		{
@@ -322,6 +301,7 @@ public class FileUtil
 			bis.close();
 			final MessageDigest md = dis.getMessageDigest();
 			final byte[] digest = md.digest();
+			StringBuilder sb = new StringBuilder(100);
 			for (final byte element : digest)
 			{
 				rtnValue += Integer.toHexString(255 & (char) element);
@@ -343,7 +323,7 @@ public class FileUtil
 	 */
 	public static String getNameWithoutExt (final String filename)
 	{
-		final int extIndex = filename.lastIndexOf(".");
+		final int extIndex = filename.lastIndexOf('.');
 		if (extIndex == -1)
 		{
 			return filename;
@@ -390,7 +370,7 @@ public class FileUtil
 		}
 		// 원도우 시스템 파일을 유닉스에서 검사할 때 File.separator 가 안되기 때문에 강제로 변환함
 		final String convPath = path.replace("\\", "/");
-		final int lastIndex = convPath.lastIndexOf("/");
+		final int lastIndex = convPath.lastIndexOf('/');
 		return convPath.substring(lastIndex + 1);
 	}
 
@@ -425,7 +405,8 @@ public class FileUtil
 
 			while (sc.hasNext())
 			{
-				sbContents.append(sc.next() + "\n");
+				sbContents.append (sc.next ());
+				sbContents.append ("\n");
 			}
 		}
 		catch (final Exception e)

@@ -1,9 +1,10 @@
 package chk.jsphelper.value.setter;
 
-import java.util.Map;
-
+import chk.jsphelper.Constant;
 import chk.jsphelper.DataList;
 import chk.jsphelper.value.TransactionValue;
+
+import java.util.Map;
 
 public class TransactionValueSetter extends TransactionValue implements ValueSetter
 {
@@ -12,7 +13,7 @@ public class TransactionValueSetter extends TransactionValue implements ValueSet
 		super(functionID, size);
 	}
 
-	public TransactionValue getValue () throws CloneNotSupportedException
+	public TransactionValue getValue ()
 	{
 		try
 		{
@@ -20,8 +21,9 @@ public class TransactionValueSetter extends TransactionValue implements ValueSet
 		}
 		catch (final CloneNotSupportedException cnse)
 		{
-			throw cnse;
+			Constant.getLogger().error("TransactionValueSetter.getValue에서 에러 발생 {}", new Object[] {cnse.getMessage()}, cnse);
 		}
+		return null;
 	}
 
 	public final void setSuccess (final boolean success)

@@ -103,17 +103,10 @@ abstract public class AbstractServlet
 	private String callMethod (final String method) throws Exception
 	{
 		String returnURI = null;
-		try
-		{
-			final Class<?>[] args1 = new Class<?>[0];
-			final Object[] args2 = new Object[0];
-			final Method m = this.getClass().getMethod(method, args1);
-			returnURI = (String) m.invoke(this, args2);
-		}
-		catch (final Exception e)
-		{
-			throw e;
-		}
+		final Class<?>[] args1 = new Class<?>[0];
+		final Object[] args2 = new Object[0];
+		final Method m = this.getClass().getMethod(method, args1);
+		returnURI = (String) m.invoke(this, args2);
 		return returnURI;
 	}
 
@@ -128,17 +121,10 @@ abstract public class AbstractServlet
 	 */
 	private void doInit (final String uploadID) throws Exception
 	{
-		try
+		this.param = new Parameter(this.req);
+		if ((uploadID != null) && !uploadID.equals(""))
 		{
-			this.param = new Parameter(this.req);
-			if ((uploadID != null) && !uploadID.equals(""))
-			{
-				this.upload = this.sc.executeUpload(uploadID, this.param);
-			}
-		}
-		catch (final Exception e)
-		{
-			throw e;
+			this.upload = this.sc.executeUpload(uploadID, this.param);
 		}
 	}
 

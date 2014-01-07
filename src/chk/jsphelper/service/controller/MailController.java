@@ -35,7 +35,7 @@ public class MailController
 		}
 		finally
 		{
-			Constant.getLogger().debug("sendMail id:{} 마침 - {}", new String[] { objectID, DateUtil.getExecutedTime(stime) });
+			Constant.getLogger().debug("sendMail id:{} 마침 - {}", new Object[] { objectID, DateUtil.getExecutedTime(stime) });
 		}
 		return result;
 	}

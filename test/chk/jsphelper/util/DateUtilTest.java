@@ -1,10 +1,10 @@
 package chk.jsphelper.util;
 
-import static org.junit.Assert.*;
+import static chk.jsphelper.util.DateUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
-
-import static chk.jsphelper.util.DateUtil.*;
 
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ public class DateUtilTest
 		assertEquals(0, getDayGap("2012-03-20", null));
 		assertEquals(5, getDayGap("2012-03-20", "2012-03-25"));
 	}
-	
+
 	@Test
 	public void testGetExecutedTime ()
 	{
@@ -40,7 +40,9 @@ public class DateUtilTest
 		{
 			Thread.sleep(100);
 		}
-		catch (Exception e) {}
+		catch (Exception e)
+		{
+		}
 		System.out.println(getExecutedTime(t));
 	}
 

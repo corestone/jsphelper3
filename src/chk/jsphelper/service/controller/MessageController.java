@@ -20,7 +20,7 @@ public class MessageController
 			}
 			if (!message.existsLang(language))
 			{
-				Constant.getLogger().warn("[{}]에 '{}'에 해당하는 메시지 언어가 정의되어 있지 않습니다.", new String[] { objectID, language });
+				Constant.getLogger().warn("[{}]에 '{}'에 해당하는 메시지 언어가 정의되어 있지 않습니다.", new Object[] { objectID, language });
 				return "";
 			}
 		}
@@ -50,7 +50,7 @@ public class MessageController
 			}
 			if (!message.existsLang(language))
 			{
-				Constant.getLogger().warn("[{}]에 '{}'에 해당하는 메시지 언어가 정의되어 있지 않습니다.", new String[] { objectID, language });
+				Constant.getLogger().warn("[{}]에 '{}'에 해당하는 메시지 언어가 정의되어 있지 않습니다.", new Object[] { objectID, language });
 				language = Constant.getValue("Message.InitLanguage", "ko-KR");
 			}
 		}
@@ -75,7 +75,7 @@ public class MessageController
 			}
 			if (!message.existsLang(language))
 			{
-				Constant.getLogger().warn("[{}]에 '{}'에 해당하는 메시지 언어가 정의되어 있지 않습니다.", new String[] { objectID, language });
+				Constant.getLogger().warn("[{}]에 '{}'에 해당하는 메시지 언어가 정의되어 있지 않습니다.", new Object[] { objectID, language });
 				lang = Constant.getValue("Message.InitLanguage", "ko-KR");
 			}
 		}

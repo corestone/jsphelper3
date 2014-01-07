@@ -1,23 +1,10 @@
 package chk.jsphelper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import chk.jsphelper.object.DataSource;
-import chk.jsphelper.object.Excel;
-import chk.jsphelper.object.Mail;
-import chk.jsphelper.object.Message;
-import chk.jsphelper.object.ServiceObject;
-import chk.jsphelper.object.Servlet;
-import chk.jsphelper.object.Sql;
-import chk.jsphelper.object.Transaction;
-import chk.jsphelper.object.Upload;
+import chk.jsphelper.object.*;
 import chk.jsphelper.object.enums.ObjectType;
 import chk.jsphelper.util.StringUtil;
+
+import java.util.*;
 
 /**
  * @author Corestone
@@ -126,9 +113,9 @@ public class ObjectFactory
 	 *            - 오브젝트 타입값 ObjectList의 해당 퍼블릭 변수를 사용하면 된다.
 	 * @return - 키들의 값이 저장된 객체
 	 */
-	public static Iterator<String> getObjectIDs (final ObjectType type)
+	public static Set<String> getObjectIDs (final ObjectType type)
 	{
-		return ObjectFactory.mappingObjectTypes(type).keySet().iterator();
+		return ObjectFactory.mappingObjectTypes(type).keySet();
 	}
 
 	/**
@@ -178,7 +165,7 @@ public class ObjectFactory
 	{
 		if (!ObjectFactory.upload.containsKey(objectID))
 		{
-
+			Constant.getLogger().error("[{}] 에 해당하는 업로드 오프젝트가 존재하지 않습니다.", objectID);
 		}
 		return ObjectFactory.upload.get(objectID);
 	}
@@ -192,11 +179,9 @@ public class ObjectFactory
 	public static void printDump (final ObjectType type)
 	{
 		final StringBuilder sb = new StringBuilder("\n");
-		final Iterator<String> element = ObjectFactory.getObjectIDs(type);
 		sb.append("************************** DUMP ").append(type.getSymbol()).append(" Objects ********************************\n");
-		while (element.hasNext())
+		for (String key : ObjectFactory.getObjectIDs(type))
 		{
-			final String key = element.next();
 			sb.append(key).append(" : ").append(ObjectFactory.mappingObjectTypes(type).get(key)).append("\n");
 		}
 		sb.append("***************************************************************************\n");
@@ -213,14 +198,13 @@ public class ObjectFactory
 	{
 		final List<String> key = new ArrayList<String>();
 		final StringBuilder sb = new StringBuilder();
-		final Iterator<String> element = ObjectFactory.getObjectIDs(type);
-		sb.append(type.getSymbol()).append(" Object Key is\n");
-
-		while (element.hasNext())
+		for (String element : ObjectFactory.getObjectIDs(type))
 		{
-			key.add(element.next());
+			key.add(element);
 		}
 		Collections.sort(key);
+
+		sb.append(type.getSymbol()).append(" Object Key is\n");
 		for (int i = 0, z = key.size(); i < z; i++)
 		{
 			sb.append("[" + key.get(i) + "]\n");

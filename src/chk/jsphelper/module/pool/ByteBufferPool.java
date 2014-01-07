@@ -6,14 +6,15 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ByteBufferPool
 {
 	// 두 블럭의 크기는 같으면 안된다. 이것은 버퍼의 구분값으로도 쓰이기 때문이다.
 	private static final int FILE_BLOCKSIZE = 8192; // 파일 블럭 크기 : 8Kb
 	private static final int MEMORY_BLOCKSIZE = 2048; // 메모리 블럭 크기 : 2Kb
-	private final ArrayList<ByteBuffer> fileQueue = new ArrayList<ByteBuffer>();
-	private final ArrayList<ByteBuffer> memoryQueue = new ArrayList<ByteBuffer>();
+	private final List<ByteBuffer> fileQueue = new ArrayList<ByteBuffer>();
+	private final List<ByteBuffer> memoryQueue = new ArrayList<ByteBuffer>();
 	// 버퍼를 가지고 올때 다 차 있으면 기본적으로 기다릴 것인지 아님 그냥 생성해서 가지고올 것인지 결정하는 변수
 	private boolean wait = false;
 
@@ -104,7 +105,7 @@ public class ByteBufferPool
 		this.wait = wait;
 	}
 
-	private void divideBuffer (final ByteBuffer buf, final int blockSize, final ArrayList<ByteBuffer> list)
+	private void divideBuffer (final ByteBuffer buf, final int blockSize, final List<ByteBuffer> list)
 	{
 		final int bufferCount = buf.capacity() / blockSize;
 		int position = 0;
@@ -118,7 +119,7 @@ public class ByteBufferPool
 		}
 	}
 
-	private ByteBuffer getBuffer (final ArrayList<ByteBuffer> firstQueue, final ArrayList<ByteBuffer> secondQueue)
+	private ByteBuffer getBuffer (final List<ByteBuffer> firstQueue, final List<ByteBuffer> secondQueue)
 	{
 		ByteBuffer buffer = this.getBuffer(firstQueue, false);
 		if (buffer == null)
@@ -132,30 +133,27 @@ public class ByteBufferPool
 		return buffer;
 	}
 
-	private ByteBuffer getBuffer (final ArrayList<ByteBuffer> queue, final boolean wait)
+	private synchronized ByteBuffer getBuffer (final List<ByteBuffer> queue, final boolean wait)
 	{
-		synchronized (queue)
+		if (queue.isEmpty())
 		{
-			if (queue.isEmpty())
+			if (wait)
 			{
-				if (wait)
+				try
 				{
-					try
-					{
-						queue.wait();
-					}
-					catch (final InterruptedException e)
-					{
-						return null;
-					}
+					queue.wait();
 				}
-				else
+				catch (final InterruptedException e)
 				{
 					return null;
 				}
 			}
-			return queue.remove(0);
+			else
+			{
+				return null;
+			}
 		}
+		return queue.remove(0);
 	}
 
 	private void initFileBuffer (int size, final File f) throws IOException
@@ -183,13 +181,10 @@ public class ByteBufferPool
 		this.divideBuffer(directBuf, ByteBufferPool.MEMORY_BLOCKSIZE, this.memoryQueue);
 	}
 
-	private void putBuffer (final ByteBuffer buffer, final ArrayList<ByteBuffer> queue)
+	private synchronized void putBuffer (final ByteBuffer buffer, final List<ByteBuffer> queue)
 	{
 		buffer.clear();
-		synchronized (queue)
-		{
-			queue.add(buffer);
-			queue.notify();
-		}
+		queue.add(buffer);
+		queue.notify();
 	}
 }

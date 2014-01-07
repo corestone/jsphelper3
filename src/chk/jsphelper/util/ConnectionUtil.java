@@ -1,12 +1,12 @@
 package chk.jsphelper.util;
 
-import java.sql.Connection;
-
 import chk.jsphelper.Constant;
 import chk.jsphelper.module.pool.ConnectionPoolManager;
 import chk.jsphelper.module.wrapper.ConnWrapper;
 
-public class ConnectionUtil
+import java.sql.Connection;
+
+public final class ConnectionUtil
 {
 	/**
 	 * 커넥션풀에서 커넥션을 가지고 오는 메소드이다.<br>
@@ -15,14 +15,14 @@ public class ConnectionUtil
 	 * jdbc.xml의 datasource 속성을 통해 해당 값에 맞는 커넥션을 가지고 오기 때문에 서비스함수 아이디가 필요하다.<br>
 	 * 여기에서 얻은 커넥션은 기본적으로 AutoCommit 이 false 인 상태이며 이 상태를 변경하지 말고 사용해야 한다.<br>
 	 * 
-	 * @param jdbcID
+	 * @param datasourceID
 	 *            - 커넥션을 가지고 올 datasource를 알기 위한 jdbc 서비스함수 아이디
 	 * @return - 해당 jdbc에 등록된 datasource의 커넥션
 	 */
 	public static ConnWrapper getConnection (final String datasourceID)
 	{
 		Constant.getLogger().warn("[{}]에 해당되는 커넥션을 ConnectionUtil을 통해 가지고 나왔습니다.", datasourceID);
-		ConnWrapper conn = null;
+		ConnWrapper conn;
 		try
 		{
 			conn = ConnectionPoolManager.getInstance().getConnection(datasourceID, "ConnectionUtil.getConnection");

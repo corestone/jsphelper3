@@ -152,7 +152,7 @@ public class SocketPool
 				throw new IOException("Maximum number of allowed Sockets reached");
 			}
 		}
-		Socket sck = null;
+		Socket sck;
 		synchronized (this.used)
 		{
 			sck = this.free.remove(this.free.size() - 1);

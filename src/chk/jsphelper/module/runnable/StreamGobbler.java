@@ -1,28 +1,20 @@
 package chk.jsphelper.module.runnable;
 
+import chk.jsphelper.util.CloseUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import chk.jsphelper.util.CloseUtil;
-
 public class StreamGobbler extends Thread
 {
 	InputStream is;
 	String result;
-	String type;
 
 	public StreamGobbler (final InputStream is)
 	{
 		this.is = is;
-		this.type = ">> ";
-	}
-
-	public StreamGobbler (final InputStream is, final String type)
-	{
-		this.is = is;
-		this.type = type;
 	}
 
 	public String getResult ()
@@ -37,12 +29,12 @@ public class StreamGobbler extends Thread
 		try
 		{
 			br = new BufferedReader(new InputStreamReader(this.is));
-			String line = "";
-			final StringBuffer sb = new StringBuffer();
+			String line;
+			final StringBuilder sb = new StringBuilder();
 
 			while ((line = br.readLine()) != null)
 			{
-				sb.append(line + "\n");
+				sb.append(line).append("\n");
 			}
 			br.close();
 			this.result = sb.toString();

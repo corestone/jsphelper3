@@ -1,58 +1,55 @@
 package chk.jsphelper;
 
-import static org.junit.Assert.fail;
+/**
+ * Created with IntelliJ IDEA.
+ * User: Corestone
+ * Date: 13. 7. 17
+ * Time: 오후 1:36
+ * To change this template use File | Settings | File Templates.
+ */
 
-import java.util.Iterator;
-
-import junit.framework.Assert;
-
+import chk.jsphelper.object.*;
+import chk.jsphelper.object.enums.ObjectType;
 import org.junit.Test;
 
-import chk.jsphelper.object.DataSource;
-import chk.jsphelper.object.Excel;
-import chk.jsphelper.object.Mail;
-import chk.jsphelper.object.Servlet;
-import chk.jsphelper.object.Transaction;
-import chk.jsphelper.object.enums.ObjectType;
+import static org.junit.Assert.*;
 
 public class ObjectFactoryTest
 {
-
 	@Test
 	public void testGetDataSource ()
 	{
 		DataSource ds = ObjectFactory.getDataSource("db");
-		Assert.assertEquals(ds.getId(), "db");
+		assertEquals(ds.getId(), "db");
 	}
 
 	@Test
 	public void testExistsID ()
 	{
-		Assert.assertTrue(ObjectFactory.existsID(ObjectType._DATASOURCE, "db"));
-		Assert.assertTrue(ObjectFactory.existsID(ObjectType.EXCEL, "excel2DB"));
-		Assert.assertTrue(ObjectFactory.existsID(ObjectType.MAIL, "passwd.find"));
-//		Assert.assertTrue(ObjectFactory.existsID(ObjectType.MESSAGE, "passwd.find"));
-		Assert.assertTrue(ObjectFactory.existsID(ObjectType.SERVLET, "main.index"));
-		Assert.assertTrue(ObjectFactory.existsID(ObjectType.SQL, "test"));
-		Assert.assertTrue(ObjectFactory.existsID(ObjectType.TRANSACTION, "product.modifyform"));
-		Assert.assertTrue(ObjectFactory.existsID(ObjectType.UPLOAD, "recruit.file"));
+		assertTrue(ObjectFactory.existsID(ObjectType._DATASOURCE, "db"));
+		assertTrue(ObjectFactory.existsID(ObjectType.EXCEL, "excel2DB"));
+		assertTrue(ObjectFactory.existsID(ObjectType.MAIL, "passwd.find"));
+// Assert.assertTrue(ObjectFactory.existsID(ObjectType.MESSAGE, "passwd.find"));
+		assertTrue(ObjectFactory.existsID(ObjectType.SERVLET, "main.index"));
+		assertTrue(ObjectFactory.existsID(ObjectType.SQL, "test"));
+		assertTrue(ObjectFactory.existsID(ObjectType.TRANSACTION, "product.modifyform"));
+		assertTrue(ObjectFactory.existsID(ObjectType.UPLOAD, "recruit.file"));
 	}
 
 	@Test
 	public void testGetExcel ()
 	{
 		Excel excel = ObjectFactory.getExcel("excel2DB");
-		Assert.assertEquals(excel.getId(), "excel2DB");
+		assertEquals(excel.getId(), "excel2DB");
 	}
 
 	@Test
 	public void testGetObjectIDs ()
 	{
 		System.out.println("############ testGetObjectIDs ############");
-		Iterator<String> ids = ObjectFactory.getObjectIDs(ObjectType.SQL);
-		while (ids.hasNext())
+		for (String id : ObjectFactory.getObjectIDs(ObjectType.SQL))
 		{
-			System.out.println("[" + ids.next() + "]");
+			System.out.println("[" + id + "]");
 		}
 	}
 
@@ -60,7 +57,7 @@ public class ObjectFactoryTest
 	public void testGetMail ()
 	{
 		Mail mail = ObjectFactory.getMail("passwd.find");
-		Assert.assertEquals(mail.getId(), "passwd.find");
+		assertEquals(mail.getId(), "passwd.find");
 	}
 
 	@Test
@@ -73,28 +70,28 @@ public class ObjectFactoryTest
 	public void testGetServlet ()
 	{
 		Servlet servlet = ObjectFactory.getServlet("main.index");
-		Assert.assertEquals(servlet.getId(), "main.index");
+		assertEquals(servlet.getId(), "main.index");
 	}
 
 	@Test
 	public void testGetSql ()
 	{
 		Servlet servlet = ObjectFactory.getServlet("main.index");
-		Assert.assertEquals(servlet.getId(), "main.index");
+		assertEquals(servlet.getId(), "main.index");
 	}
 
 	@Test
 	public void testGetTransaction ()
 	{
 		Transaction transaction = ObjectFactory.getTransaction("product.modifyform");
-		Assert.assertEquals(transaction.getId(), "product.modifyform");
+		assertEquals(transaction.getId(), "product.modifyform");
 	}
 
 	@Test
 	public void testGetObject ()
 	{
 		Transaction transaction = ObjectFactory.getTransaction("product.modifyform");
-		Assert.assertEquals(transaction.getId(), "product.modifyform");
+		assertEquals(transaction.getId(), "product.modifyform");
 	}
 
 	@Test
